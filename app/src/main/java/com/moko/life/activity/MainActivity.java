@@ -1,5 +1,6 @@
 package com.moko.life.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -41,5 +42,6 @@ public class MainActivity extends BaseActivity {
     }
 
     public void mainAddDevices(View view) {
+        startActivity(new Intent(this, SelectDeviceTypeActivity.class));
     }
 }

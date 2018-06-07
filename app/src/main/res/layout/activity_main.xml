@@ -39,6 +39,7 @@
 
         <View
             style="@style/divider_line"
+            android:background="@color/grey_999999"
             android:layout_alignParentBottom="true" />
     </RelativeLayout>
 
