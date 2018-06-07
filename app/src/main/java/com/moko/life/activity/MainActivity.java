@@ -39,6 +39,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void mainSettings(View view) {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     public void mainAddDevices(View view) {
