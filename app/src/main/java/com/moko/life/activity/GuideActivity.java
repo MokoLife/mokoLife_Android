@@ -1,11 +1,11 @@
-package com.moko.smartplug.activity;
+package com.moko.life.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.moko.smartplug.R;
-import com.moko.smartplug.base.BaseActivity;
+import com.moko.life.R;
+import com.moko.life.base.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
  * @Date 2018/6/7
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.smartplug.activity.GuideActivity
+ * @ClassPath com.moko.life.activity.GuideActivity
  */
 public class GuideActivity extends BaseActivity {
 

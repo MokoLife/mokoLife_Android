@@ -2,12 +2,12 @@ package com.moko.support;
 
 public class MokoConstants {
     // action
-    public static final String ACTION_CONNECT_SUCCESS = "com.moko.smartplug.ACTION_CONNECT_SUCCESS";
-    public static final String ACTION_CONNECT_DISCONNECTED = "com.moko.smartplug.ACTION_CONNECT_DISCONNECTED";
-    public static final String ACTION_RESPONSE_SUCCESS = "com.moko.smartplug.ACTION_RESPONSE_SUCCESS";
-    public static final String ACTION_RESPONSE_TIMEOUT = "com.moko.smartplug.ACTION_RESPONSE_TIMEOUT";
-    public static final String ACTION_RESPONSE_FINISH = "com.moko.smartplug.ACTION_RESPONSE_FINISH";
-    public static final String ACTION_RESPONSE_NOTIFY = "com.moko.smartplug.ACTION_RESPONSE_NOTIFY";
+    public static final String ACTION_CONNECT_SUCCESS = "com.moko.life.ACTION_CONNECT_SUCCESS";
+    public static final String ACTION_CONNECT_DISCONNECTED = "com.moko.life.ACTION_CONNECT_DISCONNECTED";
+    public static final String ACTION_RESPONSE_SUCCESS = "com.moko.life.ACTION_RESPONSE_SUCCESS";
+    public static final String ACTION_RESPONSE_TIMEOUT = "com.moko.life.ACTION_RESPONSE_TIMEOUT";
+    public static final String ACTION_RESPONSE_FINISH = "com.moko.life.ACTION_RESPONSE_FINISH";
+    public static final String ACTION_RESPONSE_NOTIFY = "com.moko.life.ACTION_RESPONSE_NOTIFY";
     // extra_key
     public static final String EXTRA_KEY_RESPONSE_ORDER_TASK = "EXTRA_KEY_RESPONSE_ORDER_TASK";
     public static final String EXTRA_KEY_RESPONSE_ORDER_TYPE = "EXTRA_KEY_RESPONSE_ORDER_TYPE";

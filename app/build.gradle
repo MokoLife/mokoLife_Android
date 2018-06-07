@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.moko.smartplug"
+        applicationId "com.moko.life"
         minSdkVersion 18
         targetSdkVersion 23
         versionCode 1
@@ -29,9 +29,9 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 //这里修改apk文件名
-                def fileName = "MokoEmpty-${defaultConfig.versionName}.apk"
+                def fileName = "MokoLife-${defaultConfig.versionName}.apk"
                 if (outputFile.name.contains('debug')) {
-                    fileName = "MokoEmpty-${defaultConfig.versionName}-debug.apk"
+                    fileName = "MokoLife-${defaultConfig.versionName}-debug.apk"
                 }
                 output.outputFile = new File(outputFile.parent, fileName)
             }

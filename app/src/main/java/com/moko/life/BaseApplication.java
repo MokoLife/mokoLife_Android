@@ -1,9 +1,9 @@
-package com.moko.smartplug;
+package com.moko.life;
 
 import android.app.Application;
 import android.content.Intent;
 
-import com.moko.smartplug.service.MokoService;
+import com.moko.life.service.MokoService;
 import com.moko.support.MokoSupport;
 
 public class BaseApplication extends Application {

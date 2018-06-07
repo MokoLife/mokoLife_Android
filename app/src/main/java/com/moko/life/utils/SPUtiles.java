@@ -1,9 +1,9 @@
-package com.moko.smartplug.utils;
+package com.moko.life.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 
-import com.moko.smartplug.AppConstants;
+import com.moko.life.AppConstants;
 
 public class SPUtiles {
     public static void clearAllData(Context context) {

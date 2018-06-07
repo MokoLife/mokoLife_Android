@@ -1,4 +1,4 @@
-package com.moko.smartplug.base;
+package com.moko.life.base;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

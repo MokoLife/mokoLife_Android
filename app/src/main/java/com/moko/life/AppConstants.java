@@ -1,4 +1,4 @@
-package com.moko.smartplug;
+package com.moko.life;
 
 public class AppConstants {
     // data time pattern
@@ -8,9 +8,9 @@ public class AppConstants {
     public static final String PATTERN_MM_DD_2 = "MM-dd";
     public static final String PATTERN_YYYY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm";
     // action
-    public static final String ACTION_FINISH_ACTIVITY = "com.moko.smartplug.action.finishActivity";
+    public static final String ACTION_FINISH_ACTIVITY = "com.moko.life.action.finishActivity";
     // sp
-    public static final String SP_NAME = "sp_name_smartplug";
+    public static final String SP_NAME = "sp_name_life";
 
     public static final String SP_KEY_DEVICE_ADDRESS = "sp_key_device_address";
     // extra_key

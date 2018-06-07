@@ -1,4 +1,4 @@
-package com.moko.smartplug.base;
+package com.moko.life.base;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,8 +14,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.view.Window;
 
-import com.moko.smartplug.AppConstants;
-import com.moko.smartplug.activity.GuideActivity;
+import com.moko.life.AppConstants;
+import com.moko.life.activity.GuideActivity;
 import com.moko.support.log.LogModule;
 
 public class BaseActivity extends FragmentActivity {

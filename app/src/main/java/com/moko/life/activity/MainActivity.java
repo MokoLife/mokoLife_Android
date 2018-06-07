@@ -1,20 +1,28 @@
-package com.moko.smartplug.activity;
+package com.moko.life.activity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 
-import com.moko.smartplug.R;
-import com.moko.smartplug.base.BaseActivity;
+import com.moko.life.R;
+import com.moko.life.base.BaseActivity;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * @Date 2018/6/7
  * @Author wenzheng.liu
  * @Description 设备列表
- * @ClassPath com.moko.smartplug.activity.MainActivity
+ * @ClassPath com.moko.life.activity.MainActivity
  */
 public class MainActivity extends BaseActivity {
+
+    @Bind(R.id.rl_empty)
+    RelativeLayout rlEmpty;
+    @Bind(R.id.lv_device_list)
+    ListView lvDeviceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

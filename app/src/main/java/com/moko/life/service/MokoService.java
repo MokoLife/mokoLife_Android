@@ -1,4 +1,4 @@
-package com.moko.smartplug.service;
+package com.moko.life.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import com.moko.support.log.LogModule;
  * @Date 2017/12/7 0007
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.smartplug.service.MokoService
+ * @ClassPath com.moko.life.service.MokoService
  */
 public class MokoService extends Service {
     private IBinder mBinder = new LocalBinder();

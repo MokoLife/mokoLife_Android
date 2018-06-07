@@ -1,4 +1,4 @@
-package com.moko.smartplug.utils;
+package com.moko.life.utils;
 
 import android.content.Context;
 import android.content.Intent;
