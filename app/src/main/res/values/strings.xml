@@ -34,5 +34,11 @@
     <string name="mqtt_verify_port">Port is 0~65535</string>
     <string name="mqtt_verify_length">Length range is 6~20</string>
     <string name="success">Success</string>
+    <string name="switch_on">On</string>
+    <string name="switch_off">Off</string>
+    <string name="permission_storage_close_title">Storage permission is not available</string>
+    <string name="permission_storage_close_content">Please find it in cellphone setting- permission, and allow MokoLife use the Storage permission</string>
+    <string name="permission_storage_need_title">Please turn on Storage permissions</string>
+    <string name="permission_storage_need_content">MokoLife requires access to Storage permission. If the permissions are not on, MokoLife cannot be used normally.</string>
 
 </resources>

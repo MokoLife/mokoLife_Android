@@ -29,6 +29,9 @@ public class AppConstants {
     public static final int REQUEST_CODE_DELAY = 102;
     public static final int REQUEST_CODE_SELECT_FIRMWARE = 103;
 
+    public static final int REQUEST_CODE_PERMISSION = 120;
+
+    public static final int PERMISSION_REQUEST_CODE = 1;
     // result_code
     public static final int RESULT_CONN_DISCONNECTED = 2;
 }
