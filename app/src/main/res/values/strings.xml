@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MokoLife</string>
     <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
     <string name="clear">Clear</string>
     <string name="save">Save</string>
     <string name="guide_center">Moko Life</string>

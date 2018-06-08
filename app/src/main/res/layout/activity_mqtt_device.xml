@@ -128,6 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
+            android:onClick="cleanSession"
             android:src="@drawable/checkbox_close" />
     </LinearLayout>
 
@@ -225,10 +226,12 @@
             android:textSize="18sp" />
 
         <EditText
+            android:id="@+id/et_keep_alive"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
             android:background="@drawable/shape_corner_btn_bg_white"
+            android:inputType="number"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:singleLine="true"
@@ -319,6 +322,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="90dp"
             android:background="@drawable/shape_corner_btn_bg_white"
+            android:inputType="textPassword"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:singleLine="true"

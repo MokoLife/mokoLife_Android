@@ -1,6 +1,10 @@
 package com.moko.life.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -12,7 +16,6 @@ import com.moko.life.base.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * @Date 2018/6/7
@@ -20,7 +23,7 @@ import butterknife.OnClick;
  * @Description
  * @ClassPath com.moko.life.activity.SelectDeviceTypeActivity
  */
-public class SettingsDeviceActivity extends BaseActivity {
+public class SettingsDeviceActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
 
     @Bind(R.id.et_mqtt_host)
@@ -39,13 +42,22 @@ public class SettingsDeviceActivity extends BaseActivity {
     EditText etMqttUsername;
     @Bind(R.id.et_mqtt_password)
     EditText etMqttPassword;
+    @Bind(R.id.et_keep_alive)
+    EditText etKeepAlive;
+
+    private int mCheckedQos;
+    private String[] mQosArray = new String[]{"2", "1", "0"};
+
+    private boolean mIsCleanSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mqtt_device);
         ButterKnife.bind(this);
-
+        tvQos.setText(mQosArray[mCheckedQos]);
+        ivCleanSession.setImageDrawable(ContextCompat.getDrawable(this, mIsCleanSession ? R.drawable.checkbox_open : R.drawable.checkbox_close));
+        rgConnMode.setOnCheckedChangeListener(this);
     }
 
     public void back(View view) {
@@ -53,20 +65,43 @@ public class SettingsDeviceActivity extends BaseActivity {
     }
 
     public void clearSettings(View view) {
+        etMqttHost.setText("");
+        etMqttPort.setText("");
+        etMqttClientId.setText("");
+        etMqttUsername.setText("");
+        etMqttPassword.setText("");
+        etKeepAlive.setText("");
     }
 
     public void checkQos(View view) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setSingleChoiceItems(mQosArray, mCheckedQos, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mCheckedQos = which;
+                        tvQos.setText(mQosArray[mCheckedQos]);
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
     }
 
     public void saveSettings(View view) {
     }
 
-    @OnClick({R.id.iv_clean_session, R.id.tv_qos})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_clean_session:
+    public void cleanSession(View view) {
+        mIsCleanSession = !mIsCleanSession;
+        ivCleanSession.setImageDrawable(ContextCompat.getDrawable(this, mIsCleanSession ? R.drawable.checkbox_open : R.drawable.checkbox_close));
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+        switch (checkedId) {
+            case R.id.rb_conn_mode_tcp:
                 break;
-            case R.id.tv_qos:
+            case R.id.rb_conn_mode_ssl:
                 break;
         }
     }

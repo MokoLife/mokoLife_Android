@@ -31,6 +31,10 @@
             android:name=".activity.SettingsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.SettingsDeviceActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
 
         <service android:name=".service.MokoService" />
 
