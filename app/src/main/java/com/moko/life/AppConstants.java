@@ -11,6 +11,8 @@ public class AppConstants {
     public static final String ACTION_FINISH_ACTIVITY = "com.moko.life.action.finishActivity";
     // sp
     public static final String SP_NAME = "sp_name_life";
+    public static final String SP_KEY_MQTT_CONFIG = "SP_KEY_MQTT_CONFIG";
+
 
     public static final String SP_KEY_DEVICE_ADDRESS = "sp_key_device_address";
     // extra_key

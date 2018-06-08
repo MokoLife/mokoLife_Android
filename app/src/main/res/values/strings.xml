@@ -30,5 +30,9 @@
     <string name="mqtt_client_id">Client Id</string>
     <string name="mqtt_username">Username</string>
     <string name="mqtt_Password">Password</string>
+    <string name="mqtt_verify_empty">Params can\'t be null</string>
+    <string name="mqtt_verify_port">Port is 0~65535</string>
+    <string name="mqtt_verify_length">Length range is 6~20</string>
+    <string name="success">Success</string>
 
 </resources>

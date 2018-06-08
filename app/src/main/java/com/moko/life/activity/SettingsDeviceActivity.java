@@ -5,14 +5,20 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
+import com.moko.life.entity.MQTTConfig;
+import com.moko.life.utils.SPUtiles;
+import com.moko.life.utils.ToastUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,19 +51,38 @@ public class SettingsDeviceActivity extends BaseActivity implements RadioGroup.O
     @Bind(R.id.et_keep_alive)
     EditText etKeepAlive;
 
-    private int mCheckedQos;
-    private String[] mQosArray = new String[]{"2", "1", "0"};
+    private String[] mQosArray = new String[]{"0", "1", "2"};
 
-    private boolean mIsCleanSession;
+
+    private MQTTConfig mqttConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mqtt_device);
         ButterKnife.bind(this);
-        tvQos.setText(mQosArray[mCheckedQos]);
-        ivCleanSession.setImageDrawable(ContextCompat.getDrawable(this, mIsCleanSession ? R.drawable.checkbox_open : R.drawable.checkbox_close));
+        String mqttConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, "");
+        if (TextUtils.isEmpty(mqttConfigStr)) {
+            mqttConfig = new MQTTConfig();
+        } else {
+            Gson gson = new Gson();
+            mqttConfig = gson.fromJson(mqttConfigStr, MQTTConfig.class);
+        }
+        initData();
+    }
+
+    private void initData() {
+        etMqttHost.setText(mqttConfig.host);
+        etMqttHost.setSelection(mqttConfig.host.length());
+        etMqttPort.setText(mqttConfig.port);
+        tvQos.setText(mQosArray[mqttConfig.qos]);
+        ivCleanSession.setImageDrawable(ContextCompat.getDrawable(this, mqttConfig.cleanSession ? R.drawable.checkbox_open : R.drawable.checkbox_close));
+        rgConnMode.check(mqttConfig.connectMode == 0 ? R.id.rb_conn_mode_tcp : R.id.rb_conn_mode_ssl);
         rgConnMode.setOnCheckedChangeListener(this);
+        etKeepAlive.setText(mqttConfig.keepAlive + "");
+        etMqttClientId.setText(mqttConfig.clientId);
+        etMqttUsername.setText(mqttConfig.username);
+        etMqttPassword.setText(mqttConfig.password);
     }
 
     public void back(View view) {
@@ -65,22 +90,34 @@ public class SettingsDeviceActivity extends BaseActivity implements RadioGroup.O
     }
 
     public void clearSettings(View view) {
-        etMqttHost.setText("");
-        etMqttPort.setText("");
-        etMqttClientId.setText("");
-        etMqttUsername.setText("");
-        etMqttPassword.setText("");
-        etKeepAlive.setText("");
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Clear All Parameters")
+                .setMessage("Please confirm whether to clear all parameters?")
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mqttConfig.reset();
+                        initData();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
     }
 
     public void checkQos(View view) {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setCancelable(true)
-                .setSingleChoiceItems(mQosArray, mCheckedQos, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(mQosArray, mqttConfig.qos, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mCheckedQos = which;
-                        tvQos.setText(mQosArray[mCheckedQos]);
+                        mqttConfig.qos = which;
+                        tvQos.setText(mQosArray[mqttConfig.qos]);
                         dialog.dismiss();
                     }
                 })
@@ -89,19 +126,55 @@ public class SettingsDeviceActivity extends BaseActivity implements RadioGroup.O
     }
 
     public void saveSettings(View view) {
+        mqttConfig.host = etMqttHost.getText().toString();
+        mqttConfig.port = etMqttPort.getText().toString();
+        mqttConfig.keepAlive = Integer.parseInt(etKeepAlive.getText().toString());
+        mqttConfig.clientId = etMqttClientId.getText().toString();
+        mqttConfig.username = etMqttUsername.getText().toString();
+        mqttConfig.password = etMqttPassword.getText().toString();
+        if (mqttConfig.isEmpty()) {
+            ToastUtils.showToast(this, getString(R.string.mqtt_verify_empty));
+            return;
+        }
+        String port = etMqttPort.getText().toString();
+        if (Integer.parseInt(port) > 65535) {
+            ToastUtils.showToast(this, getString(R.string.mqtt_verify_port));
+            return;
+        }
+        String clientId = etMqttClientId.getText().toString();
+        if (clientId.length() < 6) {
+            ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
+            return;
+        }
+        String username = etMqttUsername.getText().toString();
+        if (username.length() < 6) {
+            ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
+            return;
+        }
+        String password = etMqttPassword.getText().toString();
+        if (password.length() < 6) {
+            ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
+            return;
+        }
+        String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
+        SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, mqttConfigStr);
+        ToastUtils.showToast(this, getString(R.string.success));
+        finish();
     }
 
     public void cleanSession(View view) {
-        mIsCleanSession = !mIsCleanSession;
-        ivCleanSession.setImageDrawable(ContextCompat.getDrawable(this, mIsCleanSession ? R.drawable.checkbox_open : R.drawable.checkbox_close));
+        mqttConfig.cleanSession = !mqttConfig.cleanSession;
+        ivCleanSession.setImageDrawable(ContextCompat.getDrawable(this, mqttConfig.cleanSession ? R.drawable.checkbox_open : R.drawable.checkbox_close));
     }
 
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId) {
             case R.id.rb_conn_mode_tcp:
+                mqttConfig.connectMode = 0;
                 break;
             case R.id.rb_conn_mode_ssl:
+                mqttConfig.connectMode = 1;
                 break;
         }
     }
