@@ -131,12 +131,12 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     public void saveSettings(View view) {
-        mqttConfig.host = etMqttHost.getText().toString();
+        mqttConfig.host = etMqttHost.getText().toString().replaceAll(" ","");
         mqttConfig.port = etMqttPort.getText().toString();
         mqttConfig.keepAlive = Integer.parseInt(etKeepAlive.getText().toString());
-        mqttConfig.clientId = etMqttClientId.getText().toString();
-        mqttConfig.username = etMqttUsername.getText().toString();
-        mqttConfig.password = etMqttPassword.getText().toString();
+        mqttConfig.clientId = etMqttClientId.getText().toString().replaceAll(" ","");;
+        mqttConfig.username = etMqttUsername.getText().toString().replaceAll(" ","");;
+        mqttConfig.password = etMqttPassword.getText().toString().replaceAll(" ","");;
         if (mqttConfig.isEmpty()) {
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_empty));
             return;
@@ -146,14 +146,9 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_port));
             return;
         }
-        String username = etMqttUsername.getText().toString();
-        if (TextUtils.isEmpty(username)) {
-            ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
-            return;
-        }
-        String password = etMqttPassword.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
+        String clientId = etMqttClientId.getText().toString();
+        if (TextUtils.isEmpty(clientId)) {
+            ToastUtils.showToast(this, getString(R.string.mqtt_verify_empty));
             return;
         }
         String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
