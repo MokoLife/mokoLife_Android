@@ -12,6 +12,7 @@ public class AppConstants {
     // sp
     public static final String SP_NAME = "sp_name_life";
     public static final String SP_KEY_MQTT_CONFIG = "SP_KEY_MQTT_CONFIG";
+    public static final String SP_KEY_MQTT_CONFIG_APP = "SP_KEY_MQTT_CONFIG_APP";
 
 
     public static final String SP_KEY_DEVICE_ADDRESS = "sp_key_device_address";
@@ -29,6 +30,8 @@ public class AppConstants {
     public static final int REQUEST_CODE_DELAY = 102;
     public static final int REQUEST_CODE_SELECT_FIRMWARE = 103;
 
+    public static final int REQUEST_CODE_WIFI_SETTING = 0x10;
+    public static final int REQUEST_CODE_OPERATION_STEP = 0x11;
     public static final int REQUEST_CODE_PERMISSION = 120;
 
     public static final int PERMISSION_REQUEST_CODE = 1;

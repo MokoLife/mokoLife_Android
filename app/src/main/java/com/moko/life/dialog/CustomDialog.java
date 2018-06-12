@@ -3,6 +3,7 @@ package com.moko.life.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -123,9 +124,14 @@ public class CustomDialog extends Dialog {
             View layout = inflater.inflate(R.layout.dialog_normal_layout, null);
             dialog.addContentView(layout, new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            // set the dialog title  
-            ((TextView) layout.findViewById(R.id.title)).setText(title);
-            // set the confirm button  
+            // set the dialog title
+            if (TextUtils.isEmpty(title)) {
+                layout.findViewById(R.id.ll_title).setVisibility(View.GONE);
+            } else {
+                layout.findViewById(R.id.ll_title).setVisibility(View.VISIBLE);
+                ((TextView) layout.findViewById(R.id.title)).setText(title);
+            }
+            // set the confirm button
             if (positiveButtonText != null) {
                 ((Button) layout.findViewById(R.id.positiveButton))
                         .setText(positiveButtonText);

@@ -11,6 +11,7 @@ import com.moko.life.adapter.DeviceAdapter;
 import com.moko.life.base.BaseActivity;
 import com.moko.life.db.DBTools;
 import com.moko.life.entity.MokoDevice;
+import com.moko.support.service.SocketService;
 
 import java.util.ArrayList;
 
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             adapter.setItems(devices);
             lvDeviceList.setAdapter(adapter);
         }
+        startService(new Intent(this, SocketService.class));
     }
 
     @Override

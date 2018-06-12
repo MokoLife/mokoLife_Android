@@ -3,6 +3,8 @@ package com.moko.life.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 
 import java.io.File;
@@ -71,4 +73,9 @@ public class Utils {
         }
     }
 
+    public static String getWifiSSID(Context context) {
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        return info.getSSID();
+    }
 }

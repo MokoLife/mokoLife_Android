@@ -1,17 +1,25 @@
 package com.moko.support;
 
 public class MokoConstants {
+    // header
+    public static final int HEADER_GET_DEVICE_INFO = 4001;
+    public static final int HEADER_SET_MQTT_INFO = 4002;
+    public static final int HEADER_SET_WIFI_INFO = 4003;
+    // response
+    public static final int RESPONSE_SUCCESS = 0;
+    public static final int RESPONSE_FAILED_LENGTH = 1;
+    public static final int RESPONSE_FAILED_DATA_FORMAT = 2;
+    public static final int RESPONSE_FAILED_MQTT_WIFI = 3;
+    // conn status
+    public static final int CONN_STATUS_SUCCESS = 0;
+    public static final int CONN_STATUS_CONNECTING = 1;
+    public static final int CONN_STATUS_FAILED = 2;
+    public static final int CONN_STATUS_TIMEOUT = 3;
     // action
-    public static final String ACTION_CONNECT_SUCCESS = "com.moko.life.ACTION_CONNECT_SUCCESS";
-    public static final String ACTION_CONNECT_DISCONNECTED = "com.moko.life.ACTION_CONNECT_DISCONNECTED";
-    public static final String ACTION_RESPONSE_SUCCESS = "com.moko.life.ACTION_RESPONSE_SUCCESS";
-    public static final String ACTION_RESPONSE_TIMEOUT = "com.moko.life.ACTION_RESPONSE_TIMEOUT";
-    public static final String ACTION_RESPONSE_FINISH = "com.moko.life.ACTION_RESPONSE_FINISH";
-    public static final String ACTION_RESPONSE_NOTIFY = "com.moko.life.ACTION_RESPONSE_NOTIFY";
-    // extra_key
-    public static final String EXTRA_KEY_RESPONSE_ORDER_TASK = "EXTRA_KEY_RESPONSE_ORDER_TASK";
-    public static final String EXTRA_KEY_RESPONSE_ORDER_TYPE = "EXTRA_KEY_RESPONSE_ORDER_TYPE";
-    public static final String EXTRA_KEY_RESPONSE_VALUE = "EXTRA_KEY_RESPONSE_VALUE";
-    // request_code
-    public static final int REQUEST_CODE_ENABLE_BT = 1001;
+    public static final String ACTION_CONNECT_STATUS = "ACTION_CONNECT_STATUS";
+    public static final String ACTION_RESPONSE = "ACTION_RESPONSE";
+    // extra
+    public static final String EXTRA_CONNECT_STATUS = "EXTRA_CONNECT_STATUS";
+    public static final String EXTRA_RESPONSE_INFO = "EXTRA_RESPONSE_INFO";
+
 }

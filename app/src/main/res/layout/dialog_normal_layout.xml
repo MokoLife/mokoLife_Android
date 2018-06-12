@@ -11,14 +11,21 @@
         android:background="@drawable/shape_corner_btn_bg_white"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:visibility="visible" />
+        <LinearLayout
+            android:id="@+id/ll_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <View style="@style/divider_line" />
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:visibility="visible" />
+
+            <View style="@style/divider_line" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/content"
@@ -56,7 +63,8 @@
                 android:layout_weight="1.0"
                 android:background="@null"
                 android:gravity="center"
-                android:text="@string/confirm" />
+                android:text="@string/confirm"
+                android:textColor="@color/blue_0188cc" />
 
             <View style="@style/divider_line_vertical" />
 
@@ -67,7 +75,8 @@
                 android:layout_weight="1.0"
                 android:background="@null"
                 android:gravity="center"
-                android:text="@string/cancel" />
+                android:text="@string/cancel"
+                android:textColor="@color/blue_0188cc" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
