@@ -40,7 +40,7 @@
     <string name="mqtt_Password">Password</string>
     <string name="mqtt_verify_empty">Params can\'t be null</string>
     <string name="mqtt_verify_port">Port is 0~65535</string>
-    <string name="mqtt_verify_length">Length range is 6~20</string>
+    <string name="mqtt_verify_length">Length range is 0~32</string>
     <string name="success">Success</string>
     <string name="switch_on">On</string>
     <string name="switch_off">Off</string>

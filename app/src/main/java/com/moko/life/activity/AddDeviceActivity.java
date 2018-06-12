@@ -10,7 +10,6 @@ import android.content.ServiceConnection;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -23,7 +22,6 @@ import com.moko.life.base.BaseActivity;
 import com.moko.life.dialog.CustomDialog;
 import com.moko.life.entity.RequestDeviceInfo;
 import com.moko.life.utils.ToastUtils;
-import com.moko.life.utils.Utils;
 import com.moko.support.MokoConstants;
 import com.moko.support.entity.DeviceResponse;
 import com.moko.support.entity.DeviceResult;
@@ -54,7 +52,6 @@ public class AddDeviceActivity extends BaseActivity {
         ButterKnife.bind(this);
         notBlinkingTips.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         notBlinkingTips.getPaint().setAntiAlias(true);//抗锯齿
-        startService(new Intent(this, SocketService.class));
         bindService(new Intent(this, SocketService.class), mServiceConnection, BIND_AUTO_CREATE);
     }
 
@@ -121,6 +118,7 @@ public class AddDeviceActivity extends BaseActivity {
     public void notBlinking(View view) {
         startActivityForResult(new Intent(this, OperationStepsActivity.class), AppConstants.REQUEST_CODE_OPERATION_STEP);
     }
+
     /**
      * @Date 2018/6/12
      * @Author wenzheng.liu

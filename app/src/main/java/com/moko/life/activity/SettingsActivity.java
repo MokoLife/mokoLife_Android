@@ -31,9 +31,10 @@ public class SettingsActivity extends BaseActivity {
     }
 
     public void settingForDevice(View view) {
-        startActivity(new Intent(this, SettingsDeviceActivity.class));
+        startActivity(new Intent(this, SetDeviceMqttActivity.class));
     }
 
     public void settingForAPP(View view) {
+        startActivity(new Intent(this, SetAppMqttActivity.class));
     }
 }

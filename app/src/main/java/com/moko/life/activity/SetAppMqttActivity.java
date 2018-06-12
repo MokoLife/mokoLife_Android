@@ -20,6 +20,8 @@ import com.moko.life.entity.MQTTConfig;
 import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
 
+import java.util.UUID;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -27,9 +29,9 @@ import butterknife.ButterKnife;
  * @Date 2018/6/7
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.life.activity.SelectDeviceTypeActivity
+ * @ClassPath com.moko.life.activity.SetAppMqttActivity
  */
-public class SettingsDeviceActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
+public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
 
     @Bind(R.id.et_mqtt_host)
@@ -61,9 +63,12 @@ public class SettingsDeviceActivity extends BaseActivity implements RadioGroup.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mqtt_device);
         ButterKnife.bind(this);
-        String mqttConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, "");
+        String mqttConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
         if (TextUtils.isEmpty(mqttConfigStr)) {
             mqttConfig = new MQTTConfig();
+            mqttConfig.clientId = UUID.randomUUID().toString().replaceAll("-", "");
+            mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
+            SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, mqttConfigStr);
         } else {
             Gson gson = new Gson();
             mqttConfig = gson.fromJson(mqttConfigStr, MQTTConfig.class);
@@ -141,23 +146,18 @@ public class SettingsDeviceActivity extends BaseActivity implements RadioGroup.O
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_port));
             return;
         }
-        String clientId = etMqttClientId.getText().toString();
-        if (clientId.length() < 6) {
-            ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
-            return;
-        }
         String username = etMqttUsername.getText().toString();
-        if (username.length() < 6) {
+        if (TextUtils.isEmpty(username)) {
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
             return;
         }
         String password = etMqttPassword.getText().toString();
-        if (password.length() < 6) {
+        if (TextUtils.isEmpty(password)) {
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_length));
             return;
         }
         String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
-        SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, mqttConfigStr);
+        SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, mqttConfigStr);
         ToastUtils.showToast(this, getString(R.string.success));
         finish();
     }

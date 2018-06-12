@@ -50,7 +50,6 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             adapter.setItems(devices);
             lvDeviceList.setAdapter(adapter);
         }
-        startService(new Intent(this, SocketService.class));
     }
 
     @Override

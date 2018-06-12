@@ -35,7 +35,15 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.SettingsDeviceActivity"
+            android:name=".activity.SetDeviceMqttActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.OperationStepsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.SetAppMqttActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
