@@ -8,11 +8,8 @@ import android.os.IBinder;
 import android.os.Message;
 
 import com.moko.support.MokoConstants;
-import com.moko.support.SocketThread;
 import com.moko.support.entity.DeviceResponse;
-import com.moko.support.entity.DeviceResult;
 import com.moko.support.handler.BaseMessageHandler;
-import com.moko.support.log.LogModule;
 
 
 public class SocketService extends Service {
@@ -34,8 +31,8 @@ public class SocketService extends Service {
             if (msg.obj != null) {
                 DeviceResponse response = (DeviceResponse) msg.obj;
                 // 获取设备信息
-                Intent intent = new Intent(MokoConstants.ACTION_RESPONSE);
-                intent.putExtra(MokoConstants.EXTRA_RESPONSE_INFO, response);
+                Intent intent = new Intent(MokoConstants.ACTION_AP_SET_DATA_RESPONSE);
+                intent.putExtra(MokoConstants.EXTRA_AP_SET_DATA_RESPONSE, response);
                 SocketService.this.sendBroadcast(intent);
             }
         }
@@ -50,8 +47,8 @@ public class SocketService extends Service {
         @Override
         protected void handleMessage(SocketService socketService, Message msg) {
             int code = msg.what;
-            Intent intent = new Intent(MokoConstants.ACTION_CONNECT_STATUS);
-            intent.putExtra(MokoConstants.EXTRA_CONNECT_STATUS, code);
+            Intent intent = new Intent(MokoConstants.ACTION_AP_CONNECTION);
+            intent.putExtra(MokoConstants.EXTRA_AP_CONNECTION, code);
             SocketService.this.sendBroadcast(intent);
         }
     }

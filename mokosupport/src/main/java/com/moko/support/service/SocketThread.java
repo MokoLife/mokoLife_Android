@@ -1,10 +1,11 @@
-package com.moko.support;
+package com.moko.support.service;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
 import com.google.gson.Gson;
+import com.moko.support.MokoConstants;
 import com.moko.support.entity.DeviceResponse;
 import com.moko.support.log.LogModule;
 
@@ -66,6 +67,11 @@ public class SocketThread extends Thread {
                     msg.obj = response;
                     mInHandle.sendMessage(msg);// 结果返回给UI处理
                     LogModule.i("5.send to handler");
+                    if (response.result.header == MokoConstants.HEADER_SET_WIFI_INFO) {
+                        LogModule.i("6.断开连接");
+                        isRun = false;
+                        close();
+                    }
                 } else {
                     LogModule.i("没有可用连接");
                     socketState(MokoConstants.CONN_STATUS_FAILED);
@@ -79,6 +85,7 @@ public class SocketThread extends Thread {
             } catch (Exception e) {
                 LogModule.i("数据接收错误" + e.getMessage());
                 e.printStackTrace();
+                close();
             }
         }
     }
@@ -150,6 +157,7 @@ public class SocketThread extends Thread {
      */
     public void close() {
         try {
+            isRun = false;
             if (client != null) {
                 LogModule.i("close in");
                 in.close();

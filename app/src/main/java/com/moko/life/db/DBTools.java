@@ -36,12 +36,16 @@ public class DBTools {
             MokoDevice mokoDevice = new MokoDevice();
             mokoDevice.id = cursor.getInt(cursor
                     .getColumnIndex(DBConstants.DEVICE_FIELD_ID));
+            mokoDevice.function = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_FUNCTION));
             mokoDevice.name = cursor.getString(cursor
                     .getColumnIndex(DBConstants.DEVICE_FIELD_NAME));
-            mokoDevice.type = cursor.getString(cursor
-                    .getColumnIndex(DBConstants.DEVICE_FIELD_TYPE));
-            mokoDevice.on_off = "1".equals(cursor.getString(cursor
-                    .getColumnIndex(DBConstants.DEVICE_FIELD_SWITCH)));
+            mokoDevice.nickName = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_NICK_NAME));
+            mokoDevice.specifications = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_SPECIFICATIONS));
+            mokoDevice.mac = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_MAC));
             mokoDevices.add(mokoDevice);
         }
         return mokoDevices;
@@ -49,12 +53,10 @@ public class DBTools {
 
 
     public void updateDevice(MokoDevice mokoDevice) {
-        String where = DBConstants.DEVICE_FIELD_ID + " = ?";
-        String[] whereValue = {mokoDevice.id + ""};
+        String where = DBConstants.DEVICE_FIELD_MAC + " = ?";
+        String[] whereValue = {mokoDevice.mac + ""};
         ContentValues cv = new ContentValues();
-        cv.put(DBConstants.DEVICE_FIELD_NAME, mokoDevice.name);
-        cv.put(DBConstants.DEVICE_FIELD_TYPE, mokoDevice.type);
-        cv.put(DBConstants.DEVICE_FIELD_SWITCH, mokoDevice.on_off);
+        cv.put(DBConstants.DEVICE_FIELD_NICK_NAME, mokoDevice.nickName);
         db.update(DBConstants.TABLE_NAME_DEVICE, cv, where, whereValue);
     }
 

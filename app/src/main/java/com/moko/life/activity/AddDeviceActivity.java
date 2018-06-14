@@ -10,23 +10,29 @@ import android.content.ServiceConnection;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
 import com.moko.life.dialog.CustomDialog;
-import com.moko.life.entity.RequestDeviceInfo;
+import com.moko.life.entity.MQTTConfig;
+import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
 import com.moko.support.MokoConstants;
+import com.moko.support.MokoSupport;
 import com.moko.support.entity.DeviceResponse;
 import com.moko.support.entity.DeviceResult;
 import com.moko.support.log.LogModule;
 import com.moko.support.service.SocketService;
+
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -44,6 +50,14 @@ public class AddDeviceActivity extends BaseActivity {
     TextView notBlinkingTips;
     private CustomDialog wifiAlertDialog;
     private SocketService mService;
+    private String mWifiSSID;
+    private String mWifiPassword;
+    private DeviceResult mDeviceResult;
+    private MQTTConfig mDeviceMqttConfig;
+    private MQTTConfig mAppMqttConfig;
+    private boolean isSettingSuccess;
+    private String mTopicPre;
+    private boolean isDeviceConnectSuccess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +66,10 @@ public class AddDeviceActivity extends BaseActivity {
         ButterKnife.bind(this);
         notBlinkingTips.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         notBlinkingTips.getPaint().setAntiAlias(true);//抗锯齿
+        String mqttConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, "");
+        mDeviceMqttConfig = new Gson().fromJson(mqttConfigStr, MQTTConfig.class);
+        String mqttConfigAppStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        mAppMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
         bindService(new Intent(this, SocketService.class), mServiceConnection, BIND_AUTO_CREATE);
     }
 
@@ -63,8 +81,10 @@ public class AddDeviceActivity extends BaseActivity {
             mService = ((SocketService.LocalBinder) service).getService();
             // 注册广播接收器
             IntentFilter filter = new IntentFilter();
-            filter.addAction(MokoConstants.ACTION_CONNECT_STATUS);
-            filter.addAction(MokoConstants.ACTION_RESPONSE);
+            filter.addAction(MokoConstants.ACTION_AP_CONNECTION);
+            filter.addAction(MokoConstants.ACTION_AP_SET_DATA_RESPONSE);
+            filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
+            filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
             filter.setPriority(100);
             registerReceiver(mReceiver, filter);
         }
@@ -80,26 +100,93 @@ public class AddDeviceActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (MokoConstants.ACTION_CONNECT_STATUS.equals(action)) {
-                int status = intent.getIntExtra(MokoConstants.EXTRA_CONNECT_STATUS, -1);
+            if (MokoConstants.ACTION_AP_CONNECTION.equals(action)) {
+                int status = intent.getIntExtra(MokoConstants.EXTRA_AP_CONNECTION, -1);
                 if (status == MokoConstants.CONN_STATUS_SUCCESS) {
-                    RequestDeviceInfo requestDeviceInfo = new RequestDeviceInfo();
-                    requestDeviceInfo.header = MokoConstants.HEADER_GET_DEVICE_INFO;
-                    mService.sendMessage(new Gson().toJson(requestDeviceInfo));
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("header", MokoConstants.HEADER_GET_DEVICE_INFO);
+                    mService.sendMessage(jsonObject.toString());
+                } else {
+                    dismissLoadingProgressDialog();
                 }
             }
-            if (MokoConstants.ACTION_RESPONSE.equals(action)) {
-                DeviceResponse response = (DeviceResponse) intent.getSerializableExtra(MokoConstants.EXTRA_RESPONSE_INFO);
+            if (MokoConstants.ACTION_AP_SET_DATA_RESPONSE.equals(action)) {
+                DeviceResponse response = (DeviceResponse) intent.getSerializableExtra(MokoConstants.EXTRA_AP_SET_DATA_RESPONSE);
                 if (response.code == MokoConstants.RESPONSE_SUCCESS) {
-                    switch (response.code) {
+                    switch (response.result.header) {
                         case MokoConstants.HEADER_GET_DEVICE_INFO:
-                            DeviceResult result = response.result;
-                            // TODO: 2018/6/12 获取设备信息，设置成功后保存
-                            mService.closeSocket();
+                            mDeviceResult = response.result;
+                            mTopicPre = mDeviceResult.device_function
+                                    + "/" + mDeviceResult.device_name
+                                    + "/" + mDeviceResult.device_specifications
+                                    + "/" + mDeviceResult.device_mac
+                                    + "/" + "device"
+                                    + "/";
+                            // 获取设备信息，设置MQTT信息
+                            JsonObject jsonObject = new JsonObject();
+                            jsonObject.addProperty("header", MokoConstants.HEADER_SET_MQTT_INFO);
+                            jsonObject.addProperty("host", mDeviceMqttConfig.host);
+                            jsonObject.addProperty("port", Integer.parseInt(mDeviceMqttConfig.port));
+                            jsonObject.addProperty("clientId", mDeviceMqttConfig.clientId);
+                            jsonObject.addProperty("connect_mode", mDeviceMqttConfig.connectMode);
+                            jsonObject.addProperty("username", mDeviceMqttConfig.username);
+                            jsonObject.addProperty("password", mDeviceMqttConfig.password);
+                            jsonObject.addProperty("keepalive", mDeviceMqttConfig.keepAlive);
+                            jsonObject.addProperty("qos", mDeviceMqttConfig.qos);
+                            jsonObject.addProperty("clean_session", mDeviceMqttConfig.cleanSession ? 1 : 0);
+                            mService.sendMessage(jsonObject.toString());
+                            break;
+                        case MokoConstants.HEADER_SET_MQTT_INFO:
+                            // 获取MQTT信息，设置WIFI信息
+                            JsonObject wifiInfo = new JsonObject();
+                            wifiInfo.addProperty("header", MokoConstants.HEADER_SET_WIFI_INFO);
+                            wifiInfo.addProperty("wifi_ssid", mWifiSSID);
+                            wifiInfo.addProperty("wifi_pwd", mWifiPassword);
+                            wifiInfo.addProperty("wifi_security", 3);
+                            mService.sendMessage(wifiInfo.toString());
+                            break;
+                        case MokoConstants.HEADER_SET_WIFI_INFO:
+                            // 设置成功，保存数据，网络可用后订阅mqtt主题
+                            isSettingSuccess = true;
+                            dismissLoadingProgressDialog();
                             break;
                     }
                 } else {
                     ToastUtils.showToast(AddDeviceActivity.this, response.message);
+                }
+            }
+            if (action.equals(MokoConstants.ACTION_MQTT_CONNECTION)) {
+                int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
+                if (state == 1 && isSettingSuccess) {
+                    // 订阅设备主题
+                    String topicSwitchState = mTopicPre + "switch_state";
+                    String topicFirmwareInfo = mTopicPre + "firmware_infor";
+                    String topicDelayTime = mTopicPre + "delay_time";
+                    String topicOTAUpgradeState = mTopicPre + "ota_upgrade_state";
+                    String topicDeleteDevice = mTopicPre + "delete_device";
+                    String topicElectricityInfo = mTopicPre + "electricity_information";
+                    // 订阅
+                    try {
+                        MokoSupport.getInstance().subscribe(topicSwitchState, mAppMqttConfig.qos);
+                        MokoSupport.getInstance().subscribe(topicFirmwareInfo, mAppMqttConfig.qos);
+                        MokoSupport.getInstance().subscribe(topicDelayTime, mAppMqttConfig.qos);
+                        MokoSupport.getInstance().subscribe(topicOTAUpgradeState, mAppMqttConfig.qos);
+                        MokoSupport.getInstance().subscribe(topicDeleteDevice, mAppMqttConfig.qos);
+                        MokoSupport.getInstance().subscribe(topicElectricityInfo, mAppMqttConfig.qos);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (action.equals(MokoConstants.ACTION_MQTT_RECEIVE)) {
+                String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
+                if (TextUtils.isEmpty(topic) || isDeviceConnectSuccess) {
+                    return;
+                }
+                String topicSwitchState = mTopicPre + "switch_state";
+                if (topicSwitchState.equals(topic)) {
+                    // TODO: 2018/6/14 关闭进度条弹框，保存数据，返回主页面
+                    isDeviceConnectSuccess = true;
                 }
             }
         }
@@ -191,7 +278,15 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        // TODO: 2018/6/12 获取WIFI后，连接成功后发给设备
+                        mWifiSSID = etSSID.getText().toString();
+                        mWifiPassword = etPassword.getText().toString();
+                        // 获取WIFI后，连接成功后发给设备
+                        if (TextUtils.isEmpty(mWifiSSID)) {
+                            ToastUtils.showToast(AddDeviceActivity.this, getString(R.string.wifi_verify_empty));
+                            return;
+                        }
+                        // 弹出加载弹框
+                        showLoadingProgressDialog(getString(R.string.wifi_connecting));
                         // 连接设备
                         mService.startSocket();
 

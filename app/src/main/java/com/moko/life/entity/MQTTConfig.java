@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class MQTTConfig implements Serializable {
     public String host = "";
     public String port = "";
-    public boolean cleanSession;
+    public boolean cleanSession = true;
     public int connectMode;
     public int qos = 2;
     public int keepAlive = 60;
@@ -27,7 +27,7 @@ public class MQTTConfig implements Serializable {
     public void reset() {
         host = "";
         port = "";
-        cleanSession = false;
+        cleanSession = true;
         connectMode = 0;
         qos = 2;
         keepAlive = 60;

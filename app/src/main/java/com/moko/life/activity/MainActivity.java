@@ -15,6 +15,7 @@ import com.moko.life.base.BaseActivity;
 import com.moko.life.db.DBTools;
 import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
+import com.moko.life.service.MokoService;
 import com.moko.life.utils.SPUtiles;
 
 import java.util.ArrayList;
@@ -54,11 +55,13 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             adapter.setItems(devices);
             lvDeviceList.setAdapter(adapter);
         }
+        startService(new Intent(this, MokoService.class));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(this, MokoService.class));
     }
 
     public void mainSettings(View view) {
@@ -67,7 +70,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
 
     public void mainAddDevices(View view) {
         String mqttAppConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
-        String mqttDeviceConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        String mqttDeviceConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, "");
         if (TextUtils.isEmpty(mqttDeviceConfigStr)) {
             startActivity(new Intent(this, SetDeviceMqttActivity.class));
             return;

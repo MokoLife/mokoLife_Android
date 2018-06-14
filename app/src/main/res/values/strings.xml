@@ -52,6 +52,8 @@
     <string name="wifi_input_title">Please enter Wi-Fi information</string>
     <string name="wifi_input_ssid">Wi-Fi :</string>
     <string name="wifi_input_password">Password :</string>
+    <string name="wifi_verify_empty">SSID can\'t be null</string>
+    <string name="wifi_connecting">Connecting...</string>
 
 
     <string name="permission_storage_close_title">Storage permission is not available</string>

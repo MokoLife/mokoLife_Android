@@ -5,9 +5,18 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 
+import com.google.gson.Gson;
+import com.moko.life.AppConstants;
+import com.moko.life.entity.MQTTConfig;
+import com.moko.life.utils.SPUtiles;
+import com.moko.support.MokoSupport;
 import com.moko.support.handler.BaseMessageHandler;
 import com.moko.support.log.LogModule;
+
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 
 /**
@@ -40,13 +49,36 @@ public class MokoService extends Service {
         super.onCreate();
         LogModule.i("启动后台服务");
         mHandler = new ServiceHandler(this);
-
+        String mqttAppConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        if (!TextUtils.isEmpty(mqttAppConfigStr)) {
+            MQTTConfig mqttConfig = new Gson().fromJson(mqttAppConfigStr, MQTTConfig.class);
+            if (!mqttConfig.isEmpty()) {
+                MokoSupport.getInstance().creatClient(mqttConfig.host, mqttConfig.port, mqttConfig.clientId, mqttConfig.connectMode == 1);
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setAutomaticReconnect(true);
+                connOpts.setCleanSession(mqttConfig.cleanSession);
+                connOpts.setKeepAliveInterval(mqttConfig.keepAlive);
+                connOpts.setUserName(mqttConfig.username);
+                connOpts.setPassword(mqttConfig.password.toCharArray());
+                try {
+                    MokoSupport.getInstance().connectMqtt(connOpts);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+        }
     }
 
     @Override
     public void onDestroy() {
         LogModule.i("关闭后台服务");
         super.onDestroy();
+        try {
+            MokoSupport.getInstance().disconnectMqtt();
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

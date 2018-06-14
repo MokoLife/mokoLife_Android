@@ -2,6 +2,7 @@ package com.moko.life.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +18,7 @@ import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
 import com.moko.life.entity.MQTTConfig;
+import com.moko.life.service.MokoService;
 import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
 
@@ -131,12 +133,15 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     public void saveSettings(View view) {
-        mqttConfig.host = etMqttHost.getText().toString().replaceAll(" ","");
+        mqttConfig.host = etMqttHost.getText().toString().replaceAll(" ", "");
         mqttConfig.port = etMqttPort.getText().toString();
         mqttConfig.keepAlive = Integer.parseInt(etKeepAlive.getText().toString());
-        mqttConfig.clientId = etMqttClientId.getText().toString().replaceAll(" ","");;
-        mqttConfig.username = etMqttUsername.getText().toString().replaceAll(" ","");;
-        mqttConfig.password = etMqttPassword.getText().toString().replaceAll(" ","");;
+        mqttConfig.clientId = etMqttClientId.getText().toString().replaceAll(" ", "");
+        ;
+        mqttConfig.username = etMqttUsername.getText().toString().replaceAll(" ", "");
+        ;
+        mqttConfig.password = etMqttPassword.getText().toString().replaceAll(" ", "");
+        ;
         if (mqttConfig.isEmpty()) {
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_empty));
             return;
@@ -153,6 +158,8 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
         }
         String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
         SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, mqttConfigStr);
+        stopService(new Intent(this, MokoService.class));
+        startActivity(new Intent(this, MokoService.class));
         ToastUtils.showToast(this, getString(R.string.success));
         finish();
     }

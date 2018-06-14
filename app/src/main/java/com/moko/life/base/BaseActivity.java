@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
@@ -96,7 +98,7 @@ public class BaseActivity extends FragmentActivity {
 
     private ProgressDialog mLoadingDialog;
 
-    private void showLoadingProgressDialog(String loadingText) {
+    public void showLoadingProgressDialog(String loadingText) {
         mLoadingDialog = new ProgressDialog(this);
         mLoadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mLoadingDialog.setCanceledOnTouchOutside(false);
@@ -108,7 +110,7 @@ public class BaseActivity extends FragmentActivity {
         }
     }
 
-    private void dismissLoadingProgressDialog() {
+    public void dismissLoadingProgressDialog() {
         if (!isFinishing() && mLoadingDialog != null && mLoadingDialog.isShowing()) {
             mLoadingDialog.dismiss();
         }
@@ -146,5 +148,4 @@ public class BaseActivity extends FragmentActivity {
             return true;
         }
     }
-
 }
