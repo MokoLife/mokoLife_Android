@@ -64,6 +64,11 @@
     <string name="modify_device_name_conn_success">Connection successful</string>
     <string name="modify_device_name_done">Done</string>
     <string name="modify_device_name_empty">Name can\'t be null</string>
+    <string name="device_detail_switch_off">Socket is off</string>
+    <string name="device_detail_switch_on">Socket is on</string>
+    <string name="device_detail_schedule">Schedule</string>
+    <string name="device_detail_timer">Timer</string>
+    <string name="device_detail_statistics">Statistics</string>
 
 
     <string name="permission_storage_close_title">Storage permission is not available</string>

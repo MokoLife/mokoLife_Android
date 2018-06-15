@@ -181,6 +181,9 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     @Override
     public void deviceDetailClick(MokoDevice device) {
         LogModule.i("跳转详情");
+        Intent intent = new Intent(this, DeviceDetailActivity.class);
+        intent.putExtra(AppConstants.EXTRA_KEY_DEVICE, device);
+        startActivity(intent);
     }
 
     @Override
