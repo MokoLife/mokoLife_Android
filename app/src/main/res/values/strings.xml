@@ -5,6 +5,8 @@
     <string name="connect">Connect</string>
     <string name="clear">Clear</string>
     <string name="save">Save</string>
+    <string name="mqtt_connecting">Connecting...</string>
+    <string name="mqtt_connected">Connected</string>
     <string name="guide_center">Moko Life</string>
     <string name="guide_company_info">MOKO TECHNOLOGY LTD.</string>
     <string name="main_welcome">Start your moko life</string>
@@ -54,6 +56,13 @@
     <string name="wifi_input_password">Password :</string>
     <string name="wifi_verify_empty">SSID can\'t be null</string>
     <string name="wifi_connecting">Connecting...</string>
+    <string name="mqtt_connecting_title">Connecting now</string>
+    <string name="mqtt_connecting_content">Make sure your phone and device are \nas close to your router as possible.</string>
+    <string name="mqtt_connecting_timeout">Connect Timeout</string>
+
+    <string name="modify_device_name_conn_success">Connection successful</string>
+    <string name="modify_device_name_done">Done</string>
+    <string name="modify_device_name_empty">Name can\'t be null</string>
 
 
     <string name="permission_storage_close_title">Storage permission is not available</string>

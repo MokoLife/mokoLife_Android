@@ -27,6 +27,16 @@ public class DBTools {
         db = myDBOpenHelper.getWritableDatabase();
     }
 
+    public long insertDevice(MokoDevice mokoDevice) {
+        ContentValues cv = new ContentValues();
+        cv.put(DBConstants.DEVICE_FIELD_FUNCTION, mokoDevice.function);
+        cv.put(DBConstants.DEVICE_FIELD_NAME, mokoDevice.name);
+        cv.put(DBConstants.DEVICE_FIELD_NICK_NAME, mokoDevice.nickName);
+        cv.put(DBConstants.DEVICE_FIELD_SPECIFICATIONS, mokoDevice.specifications);
+        cv.put(DBConstants.DEVICE_FIELD_MAC, mokoDevice.mac);
+        long row = db.insert(DBConstants.TABLE_NAME_DEVICE, null, cv);
+        return row;
+    }
 
     public ArrayList<MokoDevice> selectAllDevice() {
         Cursor cursor = db.query(DBConstants.TABLE_NAME_DEVICE, null, null, null,
@@ -62,6 +72,12 @@ public class DBTools {
 
     public void deleteAllData() {
         db.delete(DBConstants.TABLE_NAME_DEVICE, null, null);
+    }
+
+    public void deleteDevice(MokoDevice device) {
+        String where = DBConstants.DEVICE_FIELD_MAC + " = ?";
+        String[] whereValue = {device.mac + ""};
+        db.delete(DBConstants.TABLE_NAME_DEVICE, where, whereValue);
     }
 
     // drop table;

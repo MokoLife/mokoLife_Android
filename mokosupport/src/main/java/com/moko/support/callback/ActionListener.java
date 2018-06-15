@@ -98,9 +98,7 @@ public class ActionListener implements IMqttActionListener {
      * then notify the user of success.
      */
     private void connect() {
-        Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 1);
-        context.sendBroadcast(intent);
+        LogModule.i(TAG + ":connect Success");
     }
 
     /**
@@ -148,9 +146,7 @@ public class ActionListener implements IMqttActionListener {
      * @param exception This argument is not used
      */
     private void connect(Throwable exception) {
-        Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
-        context.sendBroadcast(intent);
+        LogModule.i(TAG + ":connect Failed");
     }
 
 }

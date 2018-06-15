@@ -37,9 +37,9 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
         setView(holder, device);
     }
 
-    private void setView(DeviceViewHolder holder, MokoDevice device) {
+    private void setView(DeviceViewHolder holder, final MokoDevice device) {
         holder.ivSwitch.setImageDrawable(ContextCompat.getDrawable(mContext, device.on_off ? R.drawable.checkbox_open : R.drawable.checkbox_close));
-        holder.tvDeviceName.setText(device.name);
+        holder.tvDeviceName.setText(device.nickName);
         holder.tvDeviceSwitch.setText(device.on_off ? mContext.getString(R.string.switch_on) : mContext.getString(R.string.switch_off));
         holder.tvDeviceSwitch.setTextColor(ContextCompat.getColor(mContext, device.on_off ? R.color.blue_0188cc : R.color.grey_cccccc));
         holder.ivSwitch.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +54,13 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
                 listener.deviceDetailClick();
             }
         });
+        holder.rlDeviceDetail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                listener.deviceDelete(device);
+                return true;
+            }}
+        );
     }
 
     @Override
@@ -78,7 +85,7 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
 
         public DeviceViewHolder(View convertView) {
             super(convertView);
-            ButterKnife.bind(convertView);
+            ButterKnife.bind(this, convertView);
         }
     }
 
@@ -88,5 +95,7 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
         void deviceDetailClick();
 
         void deviceSwitchClick();
+
+        void deviceDelete(MokoDevice device);
     }
 }

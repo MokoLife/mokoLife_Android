@@ -16,13 +16,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
+import com.moko.life.db.DBTools;
 import com.moko.life.dialog.CustomDialog;
 import com.moko.life.entity.MQTTConfig;
+import com.moko.life.entity.MokoDevice;
 import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
 import com.moko.support.MokoConstants;
@@ -49,6 +52,8 @@ public class AddDeviceActivity extends BaseActivity {
     @Bind(R.id.not_blinking_tips)
     TextView notBlinkingTips;
     private CustomDialog wifiAlertDialog;
+    private CustomDialog mqttConnDialog;
+    private DonutProgress donutProgress;
     private SocketService mService;
     private String mWifiSSID;
     private String mWifiPassword;
@@ -85,7 +90,6 @@ public class AddDeviceActivity extends BaseActivity {
             filter.addAction(MokoConstants.ACTION_AP_SET_DATA_RESPONSE);
             filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
             filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
-            filter.setPriority(100);
             registerReceiver(mReceiver, filter);
         }
 
@@ -149,6 +153,7 @@ public class AddDeviceActivity extends BaseActivity {
                             // 设置成功，保存数据，网络可用后订阅mqtt主题
                             isSettingSuccess = true;
                             dismissLoadingProgressDialog();
+                            showConnMqttDialog();
                             break;
                     }
                 } else {
@@ -158,6 +163,7 @@ public class AddDeviceActivity extends BaseActivity {
             if (action.equals(MokoConstants.ACTION_MQTT_CONNECTION)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
                 if (state == 1 && isSettingSuccess) {
+                    LogModule.i("连接MQTT成功");
                     // 订阅设备主题
                     String topicSwitchState = mTopicPre + "switch_state";
                     String topicFirmwareInfo = mTopicPre + "firmware_infor";
@@ -185,8 +191,26 @@ public class AddDeviceActivity extends BaseActivity {
                 }
                 String topicSwitchState = mTopicPre + "switch_state";
                 if (topicSwitchState.equals(topic)) {
-                    // TODO: 2018/6/14 关闭进度条弹框，保存数据，返回主页面
                     isDeviceConnectSuccess = true;
+                    donutProgress.setProgress(100);
+                    donutProgress.setText(100 + "%");
+                    // 关闭进度条弹框，保存数据，跳转修改设备名称页面
+                    notBlinkingTips.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissConnMqttDialog();
+                            MokoDevice device = new MokoDevice();
+                            device.name = mDeviceResult.device_name;
+                            device.nickName = mDeviceResult.device_name;
+                            device.specifications = mDeviceResult.device_specifications;
+                            device.function = mDeviceResult.device_function;
+                            device.mac = mDeviceResult.device_mac;
+                            DBTools.getInstance(AddDeviceActivity.this).insertDevice(device);
+                            Intent modifyIntent = new Intent(AddDeviceActivity.this, ModifyNameActivity.class);
+                            modifyIntent.putExtra("mokodevice", device);
+                            startActivity(modifyIntent);
+                        }
+                    }, 500);
                 }
             }
         }
@@ -212,6 +236,7 @@ public class AddDeviceActivity extends BaseActivity {
      * @Description 判断是否连接设备wifi
      */
     public void plugBlinking(View view) {
+        isDeviceConnectSuccess = false;
         checkWifiInfo();
     }
 
@@ -294,6 +319,55 @@ public class AddDeviceActivity extends BaseActivity {
                 })
                 .create();
         dialog.show();
+    }
+
+    private int progress;
+
+    private void showConnMqttDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.mqtt_conn_content, null);
+        donutProgress = ButterKnife.findById(view, R.id.dp_progress);
+        mqttConnDialog = new CustomDialog.Builder(this)
+                .setContentView(view)
+                .create();
+        mqttConnDialog.setCancelable(false);
+        mqttConnDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                progress = 0;
+                while (progress <= 100 && !isDeviceConnectSuccess) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            donutProgress.setProgress(progress);
+                            donutProgress.setText(progress + "%");
+                        }
+                    });
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    progress++;
+                }
+            }
+        }).start();
+        notBlinkingTips.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isDeviceConnectSuccess) {
+                    isDeviceConnectSuccess = true;
+                    dismissConnMqttDialog();
+                    ToastUtils.showToast(AddDeviceActivity.this, getString(R.string.mqtt_connecting_timeout));
+                }
+            }
+        }, 30000);
+    }
+
+    private void dismissConnMqttDialog() {
+        if (mqttConnDialog != null && !isFinishing() && mqttConnDialog.isShowing()) {
+            mqttConnDialog.dismiss();
+        }
     }
 
     @Override

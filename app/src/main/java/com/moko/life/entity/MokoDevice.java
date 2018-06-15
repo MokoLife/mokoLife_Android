@@ -10,4 +10,5 @@ public class MokoDevice implements Serializable {
     public String function;
     public String specifications;
     public String mac;
+    public boolean on_off;
 }

@@ -137,11 +137,8 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
         mqttConfig.port = etMqttPort.getText().toString();
         mqttConfig.keepAlive = Integer.parseInt(etKeepAlive.getText().toString());
         mqttConfig.clientId = etMqttClientId.getText().toString().replaceAll(" ", "");
-        ;
         mqttConfig.username = etMqttUsername.getText().toString().replaceAll(" ", "");
-        ;
         mqttConfig.password = etMqttPassword.getText().toString().replaceAll(" ", "");
-        ;
         if (mqttConfig.isEmpty()) {
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_empty));
             return;
@@ -159,9 +156,17 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
         String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
         SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, mqttConfigStr);
         stopService(new Intent(this, MokoService.class));
-        startActivity(new Intent(this, MokoService.class));
-        ToastUtils.showToast(this, getString(R.string.success));
-        finish();
+        showLoadingProgressDialog(getString(R.string.mqtt_connecting));
+        etKeepAlive.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dismissLoadingProgressDialog();
+                startService(new Intent(SetAppMqttActivity.this, MokoService.class));
+                ToastUtils.showToast(SetAppMqttActivity.this, getString(R.string.success));
+                SetAppMqttActivity.this.finish();
+            }
+        }, 2000);
+
     }
 
     public void cleanSession(View view) {

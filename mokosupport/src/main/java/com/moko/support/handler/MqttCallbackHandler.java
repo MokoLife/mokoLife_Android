@@ -48,6 +48,9 @@ public class MqttCallbackHandler implements MqttCallbackExtended {
     @Override
     public void connectComplete(boolean reconnect, String serverURI) {
         LogModule.i(TAG + ":connectComplete:reconnect-->" + reconnect);
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 1);
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -56,6 +59,9 @@ public class MqttCallbackHandler implements MqttCallbackExtended {
     @Override
     public void connectionLost(Throwable cause) {
         LogModule.i(TAG + ":connectionLost");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -67,6 +73,7 @@ public class MqttCallbackHandler implements MqttCallbackExtended {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_RECEIVE);
         intent.putExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC, topic);
         intent.putExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE, message.toString());
+        context.sendBroadcast(intent);
     }
 
     /**
