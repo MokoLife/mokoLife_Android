@@ -45,13 +45,13 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
         holder.ivSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.deviceSwitchClick();
+                listener.deviceSwitchClick(device);
             }
         });
         holder.rlDeviceDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.deviceDetailClick();
+                listener.deviceDetailClick(device);
             }
         });
         holder.rlDeviceDetail.setOnLongClickListener(new View.OnLongClickListener() {
@@ -92,9 +92,9 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
     private AdapterClickListener listener;
 
     public interface AdapterClickListener {
-        void deviceDetailClick();
+        void deviceDetailClick(MokoDevice device);
 
-        void deviceSwitchClick();
+        void deviceSwitchClick(MokoDevice device);
 
         void deviceDelete(MokoDevice device);
     }

@@ -28,6 +28,7 @@ import com.moko.support.MokoSupport;
 import com.moko.support.log.LogModule;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
 
@@ -88,55 +89,39 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                         return;
                     }
                     for (MokoDevice device : devices) {
-                        String topicPre = device.function
-                                + "/" + device.name
-                                + "/" + device.specifications
-                                + "/" + device.mac
-                                + "/" + "device"
-                                + "/";
-                        // 订阅设备主题
-                        String topicSwitchState = topicPre + "switch_state";
-                        String topicFirmwareInfo = topicPre + "firmware_infor";
-                        String topicDelayTime = topicPre + "delay_time";
-                        String topicOTAUpgradeState = topicPre + "ota_upgrade_state";
-                        String topicDeleteDevice = topicPre + "delete_device";
-                        String topicElectricityInfo = topicPre + "electricity_information";
+
                         String mqttConfigAppStr = SPUtiles.getStringValue(MainActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
                         MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
                         // 订阅
-                        try {
-                            MokoSupport.getInstance().subscribe(topicSwitchState, appMqttConfig.qos);
-                            MokoSupport.getInstance().subscribe(topicFirmwareInfo, appMqttConfig.qos);
-                            MokoSupport.getInstance().subscribe(topicDelayTime, appMqttConfig.qos);
-                            MokoSupport.getInstance().subscribe(topicOTAUpgradeState, appMqttConfig.qos);
-                            MokoSupport.getInstance().subscribe(topicDeleteDevice, appMqttConfig.qos);
-                            MokoSupport.getInstance().subscribe(topicElectricityInfo, appMqttConfig.qos);
-                        } catch (MqttException e) {
-                            e.printStackTrace();
+                        for (String topic : device.getDeviceTopics()) {
+                            try {
+                                MokoSupport.getInstance().subscribe(topic, appMqttConfig.qos);
+                            } catch (MqttException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     }
                 }
             }
             if (MokoConstants.ACTION_MQTT_RECEIVE.equals(action)) {
                 String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
-                String mac = topic.split("/")[3];
-                String type = topic.split("/")[5];
-                if ("switch_state".equals(type)) {
-                    if (devices.isEmpty()) {
-                        return;
-                    }
+                if (devices.isEmpty()) {
+                    return;
+                }
+                if (topic.contains(MokoDevice.DEVICE_TOPIC_SWITCH_STATE)) {
                     String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(message).getAsJsonObject();
                     String switch_state = object.get("switch_state").getAsString();
                     for (MokoDevice device : devices) {
-                        if (device.mac.equals(mac)) {
+                        if (device.getDeviceTopicSwitchState().equals(topic)) {
                             if (!switch_state.equals(device.on_off ? "on" : "off")) {
                                 device.on_off = !device.on_off;
                                 adapter.notifyDataSetChanged();
                             }
+                            dismissLoadingProgressDialog();
                             break;
                         }
-
                     }
                 }
             }
@@ -194,13 +179,28 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     }
 
     @Override
-    public void deviceDetailClick() {
+    public void deviceDetailClick(MokoDevice device) {
         LogModule.i("跳转详情");
     }
 
     @Override
-    public void deviceSwitchClick() {
-        LogModule.i("切换开关");
+    public void deviceSwitchClick(MokoDevice device) {
+        if (MokoSupport.getInstance().isConnected()) {
+            showLoadingProgressDialog(getString(R.string.wait));
+            LogModule.i("切换开关");
+            JsonObject json = new JsonObject();
+            json.addProperty("switch_state", device.on_off ? "off" : "on");
+            String mqttConfigAppStr = SPUtiles.getStringValue(MainActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+            MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+            MqttMessage message = new MqttMessage();
+            message.setPayload(json.toString().getBytes());
+            message.setQos(appMqttConfig.qos);
+            try {
+                MokoSupport.getInstance().publish(device.getAppTopicSwitchState(), message);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

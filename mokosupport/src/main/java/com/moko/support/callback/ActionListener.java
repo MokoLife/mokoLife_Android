@@ -80,7 +80,7 @@ public class ActionListener implements IMqttActionListener {
      * user of success
      */
     private void publish() {
-
+        LogModule.i(TAG + ":publish Success");
     }
 
     /**
@@ -129,6 +129,7 @@ public class ActionListener implements IMqttActionListener {
      * @param exception This argument is not used
      */
     private void publish(Throwable exception) {
+        LogModule.i(TAG + ":publish Failed");
     }
 
     /**

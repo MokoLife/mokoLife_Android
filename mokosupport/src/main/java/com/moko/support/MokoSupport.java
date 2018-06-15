@@ -9,6 +9,7 @@ import com.moko.support.log.LogModule;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 /**
  * @Date 2017/12/7 0007
@@ -75,6 +76,12 @@ public class MokoSupport {
     public void subscribe(String topic, int qos) throws MqttException {
         if (mqttAndroidClient != null) {
             mqttAndroidClient.subscribe(topic, qos, null, new ActionListener(mContext, ActionListener.Action.SUBSCRIBE));
+        }
+    }
+
+    public void publish(String topic, MqttMessage message) throws MqttException {
+        if (mqttAndroidClient != null) {
+            mqttAndroidClient.publish(topic, message, null, new ActionListener(mContext, ActionListener.Action.PUBLISH));
         }
     }
 

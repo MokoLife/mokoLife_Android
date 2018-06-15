@@ -5,6 +5,7 @@
     <string name="connect">Connect</string>
     <string name="clear">Clear</string>
     <string name="save">Save</string>
+    <string name="wait">Waiting...</string>
     <string name="mqtt_connecting">Connecting...</string>
     <string name="mqtt_connected">Connected</string>
     <string name="guide_center">Moko Life</string>
