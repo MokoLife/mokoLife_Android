@@ -70,6 +70,11 @@
     <string name="device_detail_timer">Timer</string>
     <string name="device_detail_statistics">Statistics</string>
 
+    <string name="electricity_title">Electricity Management</string>
+    <string name="electricity_current">Current(mA)</string>
+    <string name="electricity_voltage">Voltage(V)</string>
+    <string name="electricity_power">Power(W)</string>
+
 
     <string name="permission_storage_close_title">Storage permission is not available</string>
     <string name="permission_storage_close_content">Please find it in cellphone setting- permission, and allow MokoLife use the Storage permission</string>

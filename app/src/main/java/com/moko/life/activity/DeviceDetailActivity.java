@@ -128,6 +128,7 @@ public class DeviceDetailActivity extends BaseActivity {
     }
 
     public void statisticsClick(View view) {
+        startActivity(new Intent(this, ElectricityActivity.class));
     }
 
     public void switchClick(View view) {
