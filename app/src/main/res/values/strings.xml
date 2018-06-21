@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">MokoLife</string>
+    <string name="back">Back</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="connect">Connect</string>
@@ -69,6 +70,7 @@
     <string name="device_detail_schedule">Schedule</string>
     <string name="device_detail_timer">Timer</string>
     <string name="device_detail_statistics">Statistics</string>
+    <string name="device_detail_schedule_tips">The timing function needs to be improved.</string>
 
     <string name="electricity_title">Electricity Management</string>
     <string name="electricity_current">Current(mA)</string>
@@ -80,5 +82,7 @@
     <string name="permission_storage_close_content">Please find it in cellphone setting- permission, and allow MokoLife use the Storage permission</string>
     <string name="permission_storage_need_title">Please turn on Storage permissions</string>
     <string name="permission_storage_need_content">MokoLife requires access to Storage permission. If the permissions are not on, MokoLife cannot be used normally.</string>
+    <string name="countdown_timer_on">Countdown timer (on)</string>
+    <string name="countdown_timer_off">Countdown timer (off)</string>
 
 </resources>

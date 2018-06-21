@@ -19,9 +19,11 @@ import com.google.gson.JsonParser;
 import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
+import com.moko.life.dialog.TimerDialog;
 import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
 import com.moko.life.utils.SPUtiles;
+import com.moko.life.utils.ToastUtils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
 import com.moko.support.log.LogModule;
@@ -53,6 +55,8 @@ public class DeviceDetailActivity extends BaseActivity {
     LinearLayout llBg;
     @Bind(R.id.tv_switch_state)
     TextView tvSwitchState;
+    @Bind(R.id.tv_timer_state)
+    TextView tvTimerState;
     private MokoDevice mokoDevice;
 
     @Override
@@ -90,6 +94,22 @@ public class DeviceDetailActivity extends BaseActivity {
                     }
                     dismissLoadingProgressDialog();
                 }
+                if (topic.equals(mokoDevice.getDeviceTopicDelayTime())) {
+                    String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
+                    JsonObject object = new JsonParser().parse(message).getAsJsonObject();
+                    int delay_hour = object.get("delay_hour").getAsInt();
+                    int delay_minute = object.get("delay_minute").getAsInt();
+                    int delay_second = object.get("delay_second").getAsInt();
+                    String switch_state = object.get("switch_state").getAsString();
+                    if (delay_hour == 0 && delay_minute == 0 && delay_second == 0) {
+                        tvTimerState.setVisibility(View.GONE);
+                    } else {
+                        tvTimerState.setVisibility(View.VISIBLE);
+                        String timer = String.format("%s after %d:%d:%d", switch_state, delay_hour, delay_minute, delay_second);
+                        tvTimerState.setText(timer);
+                    }
+                    dismissLoadingProgressDialog();
+                }
             }
         }
     };
@@ -122,9 +142,38 @@ public class DeviceDetailActivity extends BaseActivity {
     }
 
     public void timerClick(View view) {
+        if (isWindowLocked()) {
+            return;
+        }
+        TimerDialog dialog = new TimerDialog(this);
+        dialog.setData(mokoDevice.on_off);
+        dialog.setListener(new TimerDialog.TimerListener() {
+            @Override
+            public void onConfirmClick(TimerDialog dialog) {
+                if (MokoSupport.getInstance().isConnected()) {
+                    showLoadingProgressDialog(getString(R.string.wait));
+                    JsonObject json = new JsonObject();
+                    json.addProperty("delay_hour", dialog.getWvHour());
+                    json.addProperty("delay_minute", dialog.getWvMinute());
+                    String mqttConfigAppStr = SPUtiles.getStringValue(DeviceDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+                    MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+                    MqttMessage message = new MqttMessage();
+                    message.setPayload(json.toString().getBytes());
+                    message.setQos(appMqttConfig.qos);
+                    try {
+                        MokoSupport.getInstance().publish(mokoDevice.getAppTopicDelayTime(), message);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+                }
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     public void scheduleClick(View view) {
+        ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
     }
 
     public void statisticsClick(View view) {
