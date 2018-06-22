@@ -72,6 +72,7 @@ public class DeviceDetailActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
         filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
+        filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
         registerReceiver(mReceiver, filter);
     }
 
@@ -92,7 +93,6 @@ public class DeviceDetailActivity extends BaseActivity {
                         mokoDevice.on_off = !mokoDevice.on_off;
                         changeSwitchState();
                     }
-                    dismissLoadingProgressDialog();
                 }
                 if (topic.equals(mokoDevice.getDeviceTopicDelayTime())) {
                     String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
@@ -108,8 +108,11 @@ public class DeviceDetailActivity extends BaseActivity {
                         String timer = String.format("%s after %d:%d:%d", switch_state, delay_hour, delay_minute, delay_second);
                         tvTimerState.setText(timer);
                     }
-                    dismissLoadingProgressDialog();
                 }
+            }
+            if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
+                int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+                dismissLoadingProgressDialog();
             }
         }
     };

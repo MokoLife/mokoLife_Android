@@ -74,6 +74,8 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
         filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
+        filter.addAction(MokoConstants.ACTION_MQTT_SUBSCRIBE);
+        filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
         filter.addAction(AppConstants.ACTION_MODIFY_NAME);
         registerReceiver(mReceiver, filter);
     }
@@ -105,6 +107,14 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                     }
                 }
             }
+            if (MokoConstants.ACTION_MQTT_SUBSCRIBE.equals(action)) {
+                int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+                LogModule.i(state == 0 ? "订阅失败" : "订阅成功");
+            }
+            if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
+                int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+                dismissLoadingProgressDialog();
+            }
             if (MokoConstants.ACTION_MQTT_RECEIVE.equals(action)) {
                 String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
                 if (devices.isEmpty()) {
@@ -120,7 +130,6 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                                 device.on_off = !device.on_off;
                                 adapter.notifyDataSetChanged();
                             }
-                            dismissLoadingProgressDialog();
                             break;
                         }
                     }
@@ -219,11 +228,5 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     @Override
     public void deviceDelete(MokoDevice device) {
         LogModule.i("长按删除");
-        DBTools.getInstance(this).deleteDevice(device);
-        devices.remove(device);
-        if (devices.isEmpty()) {
-            rlEmpty.setVisibility(View.VISIBLE);
-            lvDeviceList.setVisibility(View.GONE);
-        }
     }
 }

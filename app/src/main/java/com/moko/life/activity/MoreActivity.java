@@ -47,6 +47,7 @@ public class MoreActivity extends BaseActivity {
     @Bind(R.id.tv_device_name)
     TextView tvDeviceName;
     private MokoDevice mokoDevice;
+    private String currentTopic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,8 @@ public class MoreActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
         filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
+        filter.addAction(MokoConstants.ACTION_MQTT_UNSUBSCRIBE);
+        filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
         registerReceiver(mReceiver, filter);
     }
 
@@ -74,7 +77,6 @@ public class MoreActivity extends BaseActivity {
             if (MokoConstants.ACTION_MQTT_RECEIVE.equals(action)) {
                 String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
                 if (topic.equals(mokoDevice.getDeviceTopicFirmwareInfo())) {
-                    dismissLoadingProgressDialog();
                     String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(message).getAsJsonObject();
                     String company_name = object.get("company_name").getAsString();
@@ -89,7 +91,38 @@ public class MoreActivity extends BaseActivity {
                     i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mokoDevice);
                     startActivity(i);
                 }
-
+            }
+            if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
+                int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+                if (state == 1) {
+                    if (mokoDevice.getAppTopicReset().equals(currentTopic)) {
+                        LogModule.i("重置设备成功");
+                        // 取消订阅
+                        for (String topic : mokoDevice.getDeviceTopics()) {
+                            try {
+                                MokoSupport.getInstance().unSubscribe(topic);
+                            } catch (MqttException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        DBTools.getInstance(MoreActivity.this).deleteDevice(mokoDevice);
+                        tvDeviceName.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dismissLoadingProgressDialog();
+                                // 跳转首页，刷新数据
+                                Intent intent = new Intent(MoreActivity.this, MainActivity.class);
+                                intent.putExtra(AppConstants.EXTRA_KEY_FROM_ACTIVITY, TAG);
+                                startActivity(intent);
+                            }
+                        }, 500);
+                    }
+                }
+                dismissLoadingProgressDialog();
+            }
+            if (MokoConstants.ACTION_MQTT_UNSUBSCRIBE.equals(action)) {
+                int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+                dismissLoadingProgressDialog();
             }
         }
     };
@@ -140,6 +173,7 @@ public class MoreActivity extends BaseActivity {
             MqttMessage message = new MqttMessage();
             message.setPayload("".getBytes());
             message.setQos(appMqttConfig.qos);
+            currentTopic = mokoDevice.getAppTopicReadFirmwareInfor();
             try {
                 MokoSupport.getInstance().publish(mokoDevice.getAppTopicReadFirmwareInfor(), message);
             } catch (MqttException e) {
@@ -181,35 +215,17 @@ public class MoreActivity extends BaseActivity {
     public void resetDevice(View view) {
         if (MokoSupport.getInstance().isConnected()) {
             showLoadingProgressDialog(getString(R.string.wait));
-            // 取消订阅
-            for (String topic : mokoDevice.getDeviceTopics()) {
-                try {
-                    MokoSupport.getInstance().unSubscribe(topic);
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-            }
             LogModule.i("重置设备");
             String mqttConfigAppStr = SPUtiles.getStringValue(MoreActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
             MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
             MqttMessage message = new MqttMessage();
             message.setQos(appMqttConfig.qos);
+            currentTopic = mokoDevice.getAppTopicReset();
             try {
                 MokoSupport.getInstance().publish(mokoDevice.getAppTopicReset(), message);
             } catch (MqttException e) {
                 e.printStackTrace();
             }
-            DBTools.getInstance(this).deleteDevice(mokoDevice);
-            tvDeviceName.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dismissLoadingProgressDialog();
-                    // 跳转首页，刷新数据
-                    Intent intent = new Intent(MoreActivity.this, MainActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_KEY_FROM_ACTIVITY, TAG);
-                    startActivity(intent);
-                }
-            }, 500);
         }
     }
 
