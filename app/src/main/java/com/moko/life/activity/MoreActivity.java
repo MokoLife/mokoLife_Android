@@ -234,4 +234,8 @@ public class MoreActivity extends BaseActivity {
         super.onDestroy();
         unregisterReceiver(mReceiver);
     }
+
+    public void about(View view) {
+        startActivity(new Intent(this, AboutActivity.class));
+    }
 }

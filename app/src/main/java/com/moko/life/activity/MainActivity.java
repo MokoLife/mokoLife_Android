@@ -109,7 +109,6 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             }
             if (MokoConstants.ACTION_MQTT_SUBSCRIBE.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
-                LogModule.i(state == 0 ? "订阅失败" : "订阅成功");
             }
             if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);

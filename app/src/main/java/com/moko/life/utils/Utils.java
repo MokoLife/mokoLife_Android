@@ -2,6 +2,8 @@ package com.moko.life.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -104,5 +106,22 @@ public class Utils {
         }
 
         return true;
+    }
+
+    public static String getVersionInfo(Context context) {
+        // 获取packagemanager的实例
+        PackageManager packageManager = context.getPackageManager();
+        // getPackageName()是你当前类的包名，0代表是获取版本信息
+        PackageInfo packInfo = null;
+        try {
+            packInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (packInfo != null) {
+            String version = packInfo.versionName;
+            return String.format("v%s", version);
+        }
+        return "";
     }
 }
