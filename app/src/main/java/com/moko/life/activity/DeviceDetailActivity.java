@@ -132,6 +132,7 @@ public class DeviceDetailActivity extends BaseActivity {
         drawableStatistics.setBounds(0, 0, drawableStatistics.getMinimumWidth(), drawableStatistics.getMinimumHeight());
         tvDeviceStatistics.setCompoundDrawables(null, drawableStatistics, null, null);
         tvDeviceStatistics.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
+        tvTimerState.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
     }
 
     public void back(View view) {

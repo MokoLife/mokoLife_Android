@@ -69,8 +69,8 @@
                 app:lineHeight="1dp"
                 app:maskHeight="100dp"
                 app:noEmpty="true"
-                app:normalTextColor="@color/grey_737373"
-                app:normalTextSize="17sp"
+                app:normalTextColor="@color/grey_cccccc"
+                app:normalTextSize="16sp"
                 app:selectedTextColor="@color/black_333333"
                 app:selectedTextSize="20sp"
                 app:unitHeight="30dp" />
@@ -85,8 +85,8 @@
                 app:lineHeight="1dp"
                 app:maskHeight="100dp"
                 app:noEmpty="true"
-                app:normalTextColor="@color/grey_737373"
-                app:normalTextSize="17sp"
+                app:normalTextColor="@color/grey_cccccc"
+                app:normalTextSize="16sp"
                 app:selectedTextColor="@color/black_333333"
                 app:selectedTextSize="20sp"
                 app:unitHeight="30dp" />
