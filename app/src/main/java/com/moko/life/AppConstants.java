@@ -10,6 +10,7 @@ public class AppConstants {
     // action
     public static final String ACTION_FINISH_ACTIVITY = "com.moko.life.action.finishActivity";
     public static final String ACTION_MODIFY_NAME = "com.moko.life.action.ACTION_MODIFY_NAME";
+    public static final String ACTION_DEVICE_STATE = "com.moko.life.action.ACTION_DEVICE_STATE";
     // sp
     public static final String SP_NAME = "sp_name_life";
     public static final String SP_KEY_MQTT_CONFIG = "SP_KEY_MQTT_CONFIG";

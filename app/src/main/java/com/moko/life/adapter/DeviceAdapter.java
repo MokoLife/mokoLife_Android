@@ -38,10 +38,16 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
     }
 
     private void setView(DeviceViewHolder holder, final MokoDevice device) {
-        holder.ivSwitch.setImageDrawable(ContextCompat.getDrawable(mContext, device.on_off ? R.drawable.checkbox_open : R.drawable.checkbox_close));
-        holder.tvDeviceName.setText(device.nickName);
-        holder.tvDeviceSwitch.setText(device.on_off ? mContext.getString(R.string.switch_on) : mContext.getString(R.string.switch_off));
-        holder.tvDeviceSwitch.setTextColor(ContextCompat.getColor(mContext, device.on_off ? R.color.blue_0188cc : R.color.grey_cccccc));
+        if (!device.isOnline) {
+            holder.ivSwitch.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.checkbox_close));
+            holder.tvDeviceSwitch.setText(mContext.getString(R.string.device_state_offline));
+            holder.tvDeviceSwitch.setTextColor(ContextCompat.getColor(mContext, R.color.grey_cccccc));
+        } else {
+            holder.ivSwitch.setImageDrawable(ContextCompat.getDrawable(mContext, device.on_off ? R.drawable.checkbox_open : R.drawable.checkbox_close));
+            holder.tvDeviceName.setText(device.nickName);
+            holder.tvDeviceSwitch.setText(device.on_off ? mContext.getString(R.string.switch_on) : mContext.getString(R.string.switch_off));
+            holder.tvDeviceSwitch.setTextColor(ContextCompat.getColor(mContext, device.on_off ? R.color.blue_0188cc : R.color.grey_cccccc));
+        }
         holder.ivSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,13 +60,6 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
                 listener.deviceDetailClick(device);
             }
         });
-        holder.rlDeviceDetail.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                listener.deviceDelete(device);
-                return true;
-            }}
-        );
     }
 
     @Override
@@ -96,6 +95,5 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
 
         void deviceSwitchClick(MokoDevice device);
 
-        void deviceDelete(MokoDevice device);
     }
 }

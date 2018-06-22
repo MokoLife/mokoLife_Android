@@ -73,6 +73,7 @@ public class DeviceDetailActivity extends BaseActivity {
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
         filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
         filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
+        filter.addAction(AppConstants.ACTION_DEVICE_STATE);
         registerReceiver(mReceiver, filter);
     }
 
@@ -86,6 +87,7 @@ public class DeviceDetailActivity extends BaseActivity {
             if (MokoConstants.ACTION_MQTT_RECEIVE.equals(action)) {
                 String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
                 if (topic.equals(mokoDevice.getDeviceTopicSwitchState())) {
+                    mokoDevice.isOnline = true;
                     String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(message).getAsJsonObject();
                     String switch_state = object.get("switch_state").getAsString();
@@ -113,6 +115,11 @@ public class DeviceDetailActivity extends BaseActivity {
             if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
                 dismissLoadingProgressDialog();
+            }
+            if (AppConstants.ACTION_DEVICE_STATE.equals(action)) {
+                mokoDevice.isOnline = false;
+                mokoDevice.on_off = false;
+                changeSwitchState();
             }
         }
     };
@@ -157,21 +164,27 @@ public class DeviceDetailActivity extends BaseActivity {
         dialog.setListener(new TimerDialog.TimerListener() {
             @Override
             public void onConfirmClick(TimerDialog dialog) {
-                if (MokoSupport.getInstance().isConnected()) {
-                    showLoadingProgressDialog(getString(R.string.wait));
-                    JsonObject json = new JsonObject();
-                    json.addProperty("delay_hour", dialog.getWvHour());
-                    json.addProperty("delay_minute", dialog.getWvMinute());
-                    String mqttConfigAppStr = SPUtiles.getStringValue(DeviceDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
-                    MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
-                    MqttMessage message = new MqttMessage();
-                    message.setPayload(json.toString().getBytes());
-                    message.setQos(appMqttConfig.qos);
-                    try {
-                        MokoSupport.getInstance().publish(mokoDevice.getAppTopicDelayTime(), message);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(DeviceDetailActivity.this, R.string.network_error);
+                    return;
+                }
+                if (!mokoDevice.isOnline) {
+                    ToastUtils.showToast(DeviceDetailActivity.this, R.string.device_offline);
+                    return;
+                }
+                showLoadingProgressDialog(getString(R.string.wait));
+                JsonObject json = new JsonObject();
+                json.addProperty("delay_hour", dialog.getWvHour());
+                json.addProperty("delay_minute", dialog.getWvMinute());
+                String mqttConfigAppStr = SPUtiles.getStringValue(DeviceDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+                MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+                MqttMessage message = new MqttMessage();
+                message.setPayload(json.toString().getBytes());
+                message.setQos(appMqttConfig.qos);
+                try {
+                    MokoSupport.getInstance().publish(mokoDevice.getAppTopicDelayTime(), message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
                 }
                 dialog.dismiss();
             }
@@ -184,25 +197,39 @@ public class DeviceDetailActivity extends BaseActivity {
     }
 
     public void statisticsClick(View view) {
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(this, R.string.device_offline);
+            return;
+        }
         startActivity(new Intent(this, ElectricityActivity.class));
     }
 
     public void switchClick(View view) {
-        if (MokoSupport.getInstance().isConnected()) {
-            showLoadingProgressDialog(getString(R.string.wait));
-            LogModule.i("切换开关");
-            JsonObject json = new JsonObject();
-            json.addProperty("switch_state", mokoDevice.on_off ? "off" : "on");
-            String mqttConfigAppStr = SPUtiles.getStringValue(DeviceDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
-            MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
-            MqttMessage message = new MqttMessage();
-            message.setPayload(json.toString().getBytes());
-            message.setQos(appMqttConfig.qos);
-            try {
-                MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(this, R.string.device_offline);
+            return;
+        }
+        showLoadingProgressDialog(getString(R.string.wait));
+        LogModule.i("切换开关");
+        JsonObject json = new JsonObject();
+        json.addProperty("switch_state", mokoDevice.on_off ? "off" : "on");
+        String mqttConfigAppStr = SPUtiles.getStringValue(DeviceDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        MqttMessage message = new MqttMessage();
+        message.setPayload(json.toString().getBytes());
+        message.setQos(appMqttConfig.qos);
+        try {
+            MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
+        } catch (MqttException e) {
+            e.printStackTrace();
         }
     }
 

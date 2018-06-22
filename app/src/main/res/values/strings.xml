@@ -9,6 +9,8 @@
     <string name="wait">Waiting...</string>
     <string name="mqtt_connecting">Connecting...</string>
     <string name="mqtt_connected">Connected</string>
+    <string name="network_error">Network error,please check.</string>
+    <string name="device_offline">Device offline,please check.</string>
     <string name="guide_center">Moko Life</string>
     <string name="guide_company_info">MOKO TECHNOLOGY LTD.</string>
     <string name="main_welcome">Start your moko life</string>
@@ -48,6 +50,7 @@
     <string name="success">Success</string>
     <string name="switch_on">On</string>
     <string name="switch_off">Off</string>
+    <string name="device_state_offline">Offline</string>
     <string name="wifi_alert_title">Connect  to device\'s hotspot</string>
     <string name="wifi_alert_1_1">1.  Open"Setting</string>
     <string name="wifi_alert_1_2">> WLAN"</string>

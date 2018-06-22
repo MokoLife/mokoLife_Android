@@ -1,10 +1,14 @@
 package com.moko.life.activity;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
@@ -23,6 +27,7 @@ import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
 import com.moko.life.service.MokoService;
 import com.moko.life.utils.SPUtiles;
+import com.moko.life.utils.ToastUtils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
 import com.moko.support.log.LogModule;
@@ -51,6 +56,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     TextView tvTitle;
     private ArrayList<MokoDevice> devices;
     private DeviceAdapter adapter;
+    private MokoService mokoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +76,28 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             rlEmpty.setVisibility(View.GONE);
         }
         startService(new Intent(this, MokoService.class));
-        // 注册广播接收器
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
-        filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
-        filter.addAction(MokoConstants.ACTION_MQTT_SUBSCRIBE);
-        filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
-        filter.addAction(AppConstants.ACTION_MODIFY_NAME);
-        registerReceiver(mReceiver, filter);
+        bindService(new Intent(this, MokoService.class), mServiceConnection, BIND_AUTO_CREATE);
     }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mokoService = ((MokoService.LocalBinder) service).getService();
+            // 注册广播接收器
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
+            filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
+            filter.addAction(MokoConstants.ACTION_MQTT_SUBSCRIBE);
+            filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
+            filter.addAction(AppConstants.ACTION_MODIFY_NAME);
+            registerReceiver(mReceiver, filter);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -92,7 +111,6 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                         return;
                     }
                     for (MokoDevice device : devices) {
-
                         String mqttConfigAppStr = SPUtiles.getStringValue(MainActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
                         MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
                         // 订阅
@@ -120,15 +138,33 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                     return;
                 }
                 if (topic.contains(MokoDevice.DEVICE_TOPIC_SWITCH_STATE)) {
-                    String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
-                    JsonObject object = new JsonParser().parse(message).getAsJsonObject();
+                    String receive = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
+                    JsonObject object = new JsonParser().parse(receive).getAsJsonObject();
                     String switch_state = object.get("switch_state").getAsString();
-                    for (MokoDevice device : devices) {
+                    for (final MokoDevice device : devices) {
                         if (device.getDeviceTopicSwitchState().equals(topic)) {
+                            device.isOnline = true;
+                            if (mokoService.mHandler.hasMessages(device.id)) {
+                                mokoService.mHandler.removeMessages(device.id);
+                            }
+                            Message message = Message.obtain(mokoService.mHandler, new Runnable() {
+                                @Override
+                                public void run() {
+                                    device.isOnline = false;
+                                    device.on_off = false;
+                                    LogModule.i(device.mac + "离线");
+                                    adapter.notifyDataSetChanged();
+                                    Intent i = new Intent(AppConstants.ACTION_DEVICE_STATE);
+                                    MainActivity.this.sendBroadcast(i);
+                                }
+                            });
+                            message.what = device.id;
+                            mokoService.mHandler.sendMessageDelayed(message, 5000);
+                            // 启动设备定时离线，5s收不到应答则认为离线
                             if (!switch_state.equals(device.on_off ? "on" : "off")) {
                                 device.on_off = !device.on_off;
-                                adapter.notifyDataSetChanged();
                             }
+                            adapter.notifyDataSetChanged();
                             break;
                         }
                     }
@@ -206,26 +242,27 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
 
     @Override
     public void deviceSwitchClick(MokoDevice device) {
-        if (MokoSupport.getInstance().isConnected()) {
-            showLoadingProgressDialog(getString(R.string.wait));
-            LogModule.i("切换开关");
-            JsonObject json = new JsonObject();
-            json.addProperty("switch_state", device.on_off ? "off" : "on");
-            String mqttConfigAppStr = SPUtiles.getStringValue(MainActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
-            MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
-            MqttMessage message = new MqttMessage();
-            message.setPayload(json.toString().getBytes());
-            message.setQos(appMqttConfig.qos);
-            try {
-                MokoSupport.getInstance().publish(device.getAppTopicSwitchState(), message);
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(this, R.string.network_error);
+            return;
         }
-    }
-
-    @Override
-    public void deviceDelete(MokoDevice device) {
-        LogModule.i("长按删除");
+        if (!device.isOnline) {
+            ToastUtils.showToast(this, R.string.device_offline);
+            return;
+        }
+        showLoadingProgressDialog(getString(R.string.wait));
+        LogModule.i("切换开关");
+        JsonObject json = new JsonObject();
+        json.addProperty("switch_state", device.on_off ? "off" : "on");
+        String mqttConfigAppStr = SPUtiles.getStringValue(MainActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        MqttMessage message = new MqttMessage();
+        message.setPayload(json.toString().getBytes());
+        message.setQos(appMqttConfig.qos);
+        try {
+            MokoSupport.getInstance().publish(device.getAppTopicSwitchState(), message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 }

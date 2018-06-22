@@ -32,7 +32,9 @@ public class MokoDevice implements Serializable {
     public String production_date;
     public String product_model;
     public String firmware_version;
+    public boolean isOnline;
     public ArrayList<String> subscribeTopics;
+    public Runnable deviceStateRunnable;
 
     public String getTopicPre() {
         if (TextUtils.isEmpty(topicPre)) {
