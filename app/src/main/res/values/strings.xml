@@ -85,4 +85,20 @@
     <string name="countdown_timer_on">Countdown timer (on)</string>
     <string name="countdown_timer_off">Countdown timer (off)</string>
 
+    <string name="more_title">More</string>
+    <string name="more_modify_name">Modify device name</string>
+    <string name="more_modify_name_title">Modify Device Name</string>
+    <string name="more_modify_name_tips">Device name can\'t be blank</string>
+    <string name="more_device_info">Device information</string>
+    <string name="more_new_firmware">Check the new firmware version</string>
+    <string name="more_remove_device">Remove Device</string>
+    <string name="more_reset">Reset</string>
+
+    <string name="device_info_title">Device Information</string>
+    <string name="device_info_company">Company Name</string>
+    <string name="device_info_date">Date of Manufacture</string>
+    <string name="device_info_name">Device Name</string>
+    <string name="device_info_version">Firmware Version</string>
+
+
 </resources>

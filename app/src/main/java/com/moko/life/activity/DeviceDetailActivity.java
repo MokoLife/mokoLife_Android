@@ -140,6 +140,9 @@ public class DeviceDetailActivity extends BaseActivity {
     }
 
     public void more(View view) {
+        Intent intent = new Intent(this, MoreActivity.class);
+        intent.putExtra(AppConstants.EXTRA_KEY_DEVICE, mokoDevice);
+        startActivity(intent);
     }
 
     public void timerClick(View view) {

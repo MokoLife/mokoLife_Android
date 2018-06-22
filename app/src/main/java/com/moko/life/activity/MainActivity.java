@@ -74,6 +74,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
         filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
+        filter.addAction(AppConstants.ACTION_MODIFY_NAME);
         registerReceiver(mReceiver, filter);
     }
 
@@ -125,6 +126,11 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                     }
                 }
             }
+            if (AppConstants.ACTION_MODIFY_NAME.equals(action)) {
+                devices.clear();
+                devices.addAll(DBTools.getInstance(MainActivity.this).selectAllDevice());
+                adapter.notifyDataSetChanged();
+            }
         }
     };
 
@@ -136,13 +142,17 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
         setIntent(intent);
         if (getIntent().getExtras() != null) {
             String from = getIntent().getStringExtra(AppConstants.EXTRA_KEY_FROM_ACTIVITY);
-            if (ModifyNameActivity.TAG.equals(from)) {
+            if (ModifyNameActivity.TAG.equals(from)
+                    || MoreActivity.TAG.equals(from)) {
                 devices.clear();
                 devices.addAll(DBTools.getInstance(this).selectAllDevice());
                 adapter.notifyDataSetChanged();
                 if (!devices.isEmpty()) {
                     lvDeviceList.setVisibility(View.VISIBLE);
                     rlEmpty.setVisibility(View.GONE);
+                } else {
+                    lvDeviceList.setVisibility(View.GONE);
+                    rlEmpty.setVisibility(View.VISIBLE);
                 }
             }
         }

@@ -29,7 +29,11 @@ public class ActionListener implements IMqttActionListener {
         /**
          * Publish Action
          **/
-        PUBLISH
+        PUBLISH,
+        /**
+         * UnSubscribe Action
+         **/
+        UNSUBSCRIBE
     }
 
     /**
@@ -70,6 +74,9 @@ public class ActionListener implements IMqttActionListener {
             case PUBLISH:
                 publish();
                 break;
+            case UNSUBSCRIBE:
+                unsubscribe();
+                break;
         }
 
     }
@@ -81,6 +88,9 @@ public class ActionListener implements IMqttActionListener {
      */
     private void publish() {
         LogModule.i(TAG + ":publish Success");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_PUBLISH);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 1);
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -90,6 +100,16 @@ public class ActionListener implements IMqttActionListener {
      */
     private void subscribe() {
         LogModule.i(TAG + ":subscribe Success");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_SUBSCRIBE);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 1);
+        context.sendBroadcast(intent);
+    }
+
+    private void unsubscribe() {
+        LogModule.i(TAG + ":unsubscribe Success");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_UNSUBSCRIBE);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 1);
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -119,6 +139,9 @@ public class ActionListener implements IMqttActionListener {
             case PUBLISH:
                 publish(exception);
                 break;
+            case UNSUBSCRIBE:
+                unsubscribe(exception);
+                break;
         }
 
     }
@@ -130,6 +153,9 @@ public class ActionListener implements IMqttActionListener {
      */
     private void publish(Throwable exception) {
         LogModule.i(TAG + ":publish Failed");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_PUBLISH);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -139,6 +165,17 @@ public class ActionListener implements IMqttActionListener {
      */
     private void subscribe(Throwable exception) {
         LogModule.i(TAG + ":subscribe Failed");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_SUBSCRIBE);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+        context.sendBroadcast(intent);
+    }
+
+
+    private void unsubscribe(Throwable exception) {
+        LogModule.i(TAG + ":unsubscribe Failed");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_UNSUBSCRIBE);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+        context.sendBroadcast(intent);
     }
 
     /**

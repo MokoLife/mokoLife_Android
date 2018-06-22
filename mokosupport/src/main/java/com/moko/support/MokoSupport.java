@@ -79,6 +79,12 @@ public class MokoSupport {
         }
     }
 
+    public void unSubscribe(String topic) throws MqttException {
+        if (mqttAndroidClient != null) {
+            mqttAndroidClient.unsubscribe(topic, null, new ActionListener(mContext, ActionListener.Action.UNSUBSCRIBE));
+        }
+    }
+
     public void publish(String topic, MqttMessage message) throws MqttException {
         if (mqttAndroidClient != null) {
             mqttAndroidClient.publish(topic, message, null, new ActionListener(mContext, ActionListener.Action.PUBLISH));

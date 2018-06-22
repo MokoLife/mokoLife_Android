@@ -102,7 +102,7 @@ public class BaseActivity extends FragmentActivity {
         mLoadingDialog = new ProgressDialog(this);
         mLoadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mLoadingDialog.setCanceledOnTouchOutside(false);
-        mLoadingDialog.setCancelable(false);
+        mLoadingDialog.setCancelable(true);
         mLoadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mLoadingDialog.setMessage(loadingText);
         if (!isFinishing() && mLoadingDialog != null && !mLoadingDialog.isShowing()) {

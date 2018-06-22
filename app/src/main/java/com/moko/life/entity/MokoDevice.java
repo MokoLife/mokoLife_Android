@@ -28,6 +28,10 @@ public class MokoDevice implements Serializable {
     public String mac;
     public boolean on_off;
     public String topicPre;
+    public String company_name;
+    public String production_date;
+    public String product_model;
+    public String firmware_version;
     public ArrayList<String> subscribeTopics;
 
     public String getTopicPre() {

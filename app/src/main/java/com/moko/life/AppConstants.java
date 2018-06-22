@@ -9,6 +9,7 @@ public class AppConstants {
     public static final String PATTERN_YYYY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm";
     // action
     public static final String ACTION_FINISH_ACTIVITY = "com.moko.life.action.finishActivity";
+    public static final String ACTION_MODIFY_NAME = "com.moko.life.action.ACTION_MODIFY_NAME";
     // sp
     public static final String SP_NAME = "sp_name_life";
     public static final String SP_KEY_MQTT_CONFIG = "SP_KEY_MQTT_CONFIG";
