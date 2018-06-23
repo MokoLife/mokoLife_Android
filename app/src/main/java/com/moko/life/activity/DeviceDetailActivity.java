@@ -119,6 +119,7 @@ public class DeviceDetailActivity extends BaseActivity {
             if (AppConstants.ACTION_DEVICE_STATE.equals(action)) {
                 mokoDevice.isOnline = false;
                 mokoDevice.on_off = false;
+                tvTimerState.setVisibility(View.GONE);
                 changeSwitchState();
             }
         }
@@ -134,11 +135,11 @@ public class DeviceDetailActivity extends BaseActivity {
         drawableSchedult.setBounds(0, 0, drawableSchedult.getMinimumWidth(), drawableSchedult.getMinimumHeight());
         tvDeviceSchedule.setCompoundDrawables(null, drawableSchedult, null, null);
         tvDeviceSchedule.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
-        Drawable drawableTimer = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.schedule_on : R.drawable.schedule_off);
+        Drawable drawableTimer = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.timer_on : R.drawable.timer_off);
         drawableTimer.setBounds(0, 0, drawableTimer.getMinimumWidth(), drawableTimer.getMinimumHeight());
         tvDeviceTimer.setCompoundDrawables(null, drawableTimer, null, null);
         tvDeviceTimer.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
-        Drawable drawableStatistics = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.schedule_on : R.drawable.schedule_off);
+        Drawable drawableStatistics = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.statistics_on : R.drawable.statistics_off);
         drawableStatistics.setBounds(0, 0, drawableStatistics.getMinimumWidth(), drawableStatistics.getMinimumHeight());
         tvDeviceStatistics.setCompoundDrawables(null, drawableStatistics, null, null);
         tvDeviceStatistics.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));

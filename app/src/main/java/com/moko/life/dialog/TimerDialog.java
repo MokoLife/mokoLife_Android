@@ -54,7 +54,7 @@ public class TimerDialog extends BaseDialog<Boolean> {
             minute.add(i + " min");
         }
         wvMinute.setData(minute);
-        wvHour.setDefault(0);
+        wvMinute.setDefault(0);
     }
 
     public int getWvHour() {

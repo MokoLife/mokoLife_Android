@@ -107,9 +107,14 @@ public class AddDeviceActivity extends BaseActivity {
             if (MokoConstants.ACTION_AP_CONNECTION.equals(action)) {
                 int status = intent.getIntExtra(MokoConstants.EXTRA_AP_CONNECTION, -1);
                 if (status == MokoConstants.CONN_STATUS_SUCCESS) {
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("header", MokoConstants.HEADER_GET_DEVICE_INFO);
-                    mService.sendMessage(jsonObject.toString());
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JsonObject jsonObject = new JsonObject();
+                            jsonObject.addProperty("header", MokoConstants.HEADER_GET_DEVICE_INFO);
+                            mService.sendMessage(jsonObject.toString());
+                        }
+                    }).start();
                 } else {
                     dismissLoadingProgressDialog();
                 }
@@ -127,7 +132,7 @@ public class AddDeviceActivity extends BaseActivity {
                                     + "/" + "device"
                                     + "/";
                             // 获取设备信息，设置MQTT信息
-                            JsonObject jsonObject = new JsonObject();
+                            final JsonObject jsonObject = new JsonObject();
                             jsonObject.addProperty("header", MokoConstants.HEADER_SET_MQTT_INFO);
                             jsonObject.addProperty("host", mDeviceMqttConfig.host);
                             jsonObject.addProperty("port", Integer.parseInt(mDeviceMqttConfig.port));
@@ -138,16 +143,26 @@ public class AddDeviceActivity extends BaseActivity {
                             jsonObject.addProperty("keepalive", mDeviceMqttConfig.keepAlive);
                             jsonObject.addProperty("qos", mDeviceMqttConfig.qos);
                             jsonObject.addProperty("clean_session", mDeviceMqttConfig.cleanSession ? 1 : 0);
-                            mService.sendMessage(jsonObject.toString());
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mService.sendMessage(jsonObject.toString());
+                                }
+                            }).start();
                             break;
                         case MokoConstants.HEADER_SET_MQTT_INFO:
                             // 获取MQTT信息，设置WIFI信息
-                            JsonObject wifiInfo = new JsonObject();
+                            final JsonObject wifiInfo = new JsonObject();
                             wifiInfo.addProperty("header", MokoConstants.HEADER_SET_WIFI_INFO);
                             wifiInfo.addProperty("wifi_ssid", mWifiSSID);
                             wifiInfo.addProperty("wifi_pwd", mWifiPassword);
                             wifiInfo.addProperty("wifi_security", 3);
-                            mService.sendMessage(wifiInfo.toString());
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mService.sendMessage(wifiInfo.toString());
+                                }
+                            }).start();
                             break;
                         case MokoConstants.HEADER_SET_WIFI_INFO:
                             // 设置成功，保存数据，网络可用后订阅mqtt主题
@@ -361,7 +376,7 @@ public class AddDeviceActivity extends BaseActivity {
                     ToastUtils.showToast(AddDeviceActivity.this, getString(R.string.mqtt_connecting_timeout));
                 }
             }
-        }, 30000);
+        }, 90 * 1000);
     }
 
     private void dismissConnMqttDialog() {

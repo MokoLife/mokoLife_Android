@@ -205,8 +205,9 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopService(new Intent(this, MokoService.class));
         unregisterReceiver(mReceiver);
+        unbindService(mServiceConnection);
+        stopService(new Intent(this, MokoService.class));
     }
 
     public void mainSettings(View view) {
