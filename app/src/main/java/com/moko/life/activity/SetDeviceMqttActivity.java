@@ -2,6 +2,7 @@ package com.moko.life.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.content.ContextCompat;
@@ -50,6 +51,8 @@ public class SetDeviceMqttActivity extends BaseActivity implements RadioGroup.On
     EditText etMqttPassword;
     @Bind(R.id.et_keep_alive)
     EditText etKeepAlive;
+    @Bind(R.id.title)
+    TextView title;
 
     private String[] mQosArray = new String[]{"0", "1", "2"};
 
@@ -62,6 +65,7 @@ public class SetDeviceMqttActivity extends BaseActivity implements RadioGroup.On
         setContentView(R.layout.activity_mqtt_device);
         ButterKnife.bind(this);
         String mqttConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, "");
+        title.setText(R.string.settings_mqtt_device);
         if (TextUtils.isEmpty(mqttConfigStr)) {
             mqttConfig = new MQTTConfig();
         } else {
@@ -126,12 +130,12 @@ public class SetDeviceMqttActivity extends BaseActivity implements RadioGroup.On
     }
 
     public void saveSettings(View view) {
-        mqttConfig.host = etMqttHost.getText().toString().replaceAll(" ","");;
+        mqttConfig.host = etMqttHost.getText().toString().replaceAll(" ", "");
         mqttConfig.port = etMqttPort.getText().toString();
         mqttConfig.keepAlive = Integer.parseInt(etKeepAlive.getText().toString());
-        mqttConfig.clientId = etMqttClientId.getText().toString().replaceAll(" ","");;
-        mqttConfig.username = etMqttUsername.getText().toString().replaceAll(" ","");;
-        mqttConfig.password = etMqttPassword.getText().toString().replaceAll(" ","");;
+        mqttConfig.clientId = etMqttClientId.getText().toString().replaceAll(" ", "");
+        mqttConfig.username = etMqttUsername.getText().toString().replaceAll(" ", "");
+        mqttConfig.password = etMqttPassword.getText().toString().replaceAll(" ", "");
         if (mqttConfig.isEmpty()) {
             ToastUtils.showToast(this, getString(R.string.mqtt_verify_empty));
             return;
@@ -144,6 +148,10 @@ public class SetDeviceMqttActivity extends BaseActivity implements RadioGroup.On
         String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
         SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG, mqttConfigStr);
         ToastUtils.showToast(this, getString(R.string.success));
+        String mqttAppConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        if (TextUtils.isEmpty(mqttAppConfigStr)) {
+            startActivity(new Intent(this, SetAppMqttActivity.class));
+        }
         finish();
     }
 

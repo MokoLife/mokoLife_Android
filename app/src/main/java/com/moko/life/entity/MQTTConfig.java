@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import java.io.Serializable;
 
 public class MQTTConfig implements Serializable {
-    public String host = "http://45.77.124.18";
+    public String host = "45.77.124.18";
     public String port = "1883";
     public boolean cleanSession = true;
     public int connectMode;

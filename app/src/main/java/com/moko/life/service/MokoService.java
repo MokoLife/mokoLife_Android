@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.Message;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -12,7 +11,6 @@ import com.moko.life.AppConstants;
 import com.moko.life.entity.MQTTConfig;
 import com.moko.life.utils.SPUtiles;
 import com.moko.support.MokoSupport;
-import com.moko.support.handler.BaseMessageHandler;
 import com.moko.support.log.LogModule;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -48,7 +46,6 @@ public class MokoService extends Service {
     public void onCreate() {
         super.onCreate();
         LogModule.i("启动后台服务");
-        mHandler = new ServiceHandler(this);
         String mqttAppConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
         if (!TextUtils.isEmpty(mqttAppConfigStr)) {
             MQTTConfig mqttConfig = new Gson().fromJson(mqttAppConfigStr, MQTTConfig.class);
@@ -84,18 +81,5 @@ public class MokoService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    public ServiceHandler mHandler;
-
-    public class ServiceHandler extends BaseMessageHandler<MokoService> {
-
-        public ServiceHandler(MokoService service) {
-            super(service);
-        }
-
-        @Override
-        protected void handleMessage(MokoService service, Message msg) {
-        }
     }
 }

@@ -30,6 +30,7 @@ import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
+import com.moko.support.handler.BaseMessageHandler;
 import com.moko.support.log.LogModule;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -56,7 +57,6 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     TextView tvTitle;
     private ArrayList<MokoDevice> devices;
     private DeviceAdapter adapter;
-    private MokoService mokoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,29 +75,17 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             lvDeviceList.setVisibility(View.VISIBLE);
             rlEmpty.setVisibility(View.GONE);
         }
+        mHandler =  new OfflineHandler(this);
+        // 注册广播接收器
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
+        filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
+        filter.addAction(MokoConstants.ACTION_MQTT_SUBSCRIBE);
+        filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
+        filter.addAction(AppConstants.ACTION_MODIFY_NAME);
+        registerReceiver(mReceiver, filter);
         startService(new Intent(this, MokoService.class));
-        bindService(new Intent(this, MokoService.class), mServiceConnection, BIND_AUTO_CREATE);
     }
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mokoService = ((MokoService.LocalBinder) service).getService();
-            // 注册广播接收器
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
-            filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
-            filter.addAction(MokoConstants.ACTION_MQTT_SUBSCRIBE);
-            filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
-            filter.addAction(AppConstants.ACTION_MODIFY_NAME);
-            registerReceiver(mReceiver, filter);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -105,7 +93,15 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             String action = intent.getAction();
             if (MokoConstants.ACTION_MQTT_CONNECTION.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
-                tvTitle.setText(state == 1 ? R.string.mqtt_connected : R.string.mqtt_connecting);
+                String title = "";
+                if (state == 0) {
+                    title = getString(R.string.mqtt_connecting);
+                } else if(state == 1){
+                    title = getString(R.string.mqtt_connected);
+                } else if(state == 2){
+                    title = getString(R.string.mqtt_connect_failed);
+                }
+                tvTitle.setText(title);
                 if (state == 1) {
                     if (devices.isEmpty()) {
                         return;
@@ -144,10 +140,10 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                     for (final MokoDevice device : devices) {
                         if (device.getDeviceTopicSwitchState().equals(topic)) {
                             device.isOnline = true;
-                            if (mokoService.mHandler.hasMessages(device.id)) {
-                                mokoService.mHandler.removeMessages(device.id);
+                            if (mHandler.hasMessages(device.id)) {
+                                mHandler.removeMessages(device.id);
                             }
-                            Message message = Message.obtain(mokoService.mHandler, new Runnable() {
+                            Message message = Message.obtain(mHandler, new Runnable() {
                                 @Override
                                 public void run() {
                                     device.isOnline = false;
@@ -159,7 +155,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                                 }
                             });
                             message.what = device.id;
-                            mokoService.mHandler.sendMessageDelayed(message, 5000);
+                            mHandler.sendMessageDelayed(message, 5000);
                             // 启动设备定时离线，5s收不到应答则认为离线
                             if (!switch_state.equals(device.on_off ? "on" : "off")) {
                                 device.on_off = !device.on_off;
@@ -206,7 +202,6 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
-        unbindService(mServiceConnection);
         stopService(new Intent(this, MokoService.class));
     }
 
@@ -264,6 +259,20 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             MokoSupport.getInstance().publish(device.getAppTopicSwitchState(), message);
         } catch (MqttException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    public OfflineHandler mHandler;
+
+    public class OfflineHandler extends BaseMessageHandler<MainActivity> {
+
+        public OfflineHandler(MainActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        protected void handleMessage(MainActivity activity, Message msg) {
         }
     }
 }

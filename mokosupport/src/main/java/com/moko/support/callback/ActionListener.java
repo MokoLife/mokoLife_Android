@@ -156,6 +156,7 @@ public class ActionListener implements IMqttActionListener {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_PUBLISH);
         intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
         context.sendBroadcast(intent);
+        LogModule.w(exception.getMessage());
     }
 
     /**
@@ -168,6 +169,7 @@ public class ActionListener implements IMqttActionListener {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_SUBSCRIBE);
         intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
         context.sendBroadcast(intent);
+        LogModule.w(exception.getMessage());
     }
 
 
@@ -176,6 +178,7 @@ public class ActionListener implements IMqttActionListener {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_UNSUBSCRIBE);
         intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
         context.sendBroadcast(intent);
+        LogModule.w(exception.getMessage());
     }
 
     /**
@@ -185,6 +188,10 @@ public class ActionListener implements IMqttActionListener {
      */
     private void connect(Throwable exception) {
         LogModule.i(TAG + ":connect Failed");
+        Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 2);
+        context.sendBroadcast(intent);
+        LogModule.w(exception.getMessage());
     }
 
 }

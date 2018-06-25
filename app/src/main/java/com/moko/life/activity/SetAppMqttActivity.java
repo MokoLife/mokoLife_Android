@@ -1,8 +1,11 @@
 package com.moko.life.activity;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +24,7 @@ import com.moko.life.entity.MQTTConfig;
 import com.moko.life.service.MokoService;
 import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
+import com.moko.support.MokoConstants;
 
 import java.util.UUID;
 
@@ -54,6 +58,8 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
     EditText etMqttPassword;
     @Bind(R.id.et_keep_alive)
     EditText etKeepAlive;
+    @Bind(R.id.title)
+    TextView title;
 
     private String[] mQosArray = new String[]{"0", "1", "2"};
 
@@ -66,6 +72,7 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
         setContentView(R.layout.activity_mqtt_device);
         ButterKnife.bind(this);
         String mqttConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        title.setText(R.string.settings_mqtt_app);
         if (TextUtils.isEmpty(mqttConfigStr)) {
             mqttConfig = new MQTTConfig();
             mqttConfig.clientId = UUID.randomUUID().toString().replaceAll("-", "");
@@ -76,7 +83,30 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
             mqttConfig = gson.fromJson(mqttConfigStr, MQTTConfig.class);
         }
         initData();
+        // 注册广播接收器
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
+        registerReceiver(mReceiver, filter);
     }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (MokoConstants.ACTION_MQTT_CONNECTION.equals(action)) {
+                int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
+                if (state == 1) {
+                    ToastUtils.showToast(SetAppMqttActivity.this, getString(R.string.success));
+                    String mqttConfigStr = SPUtiles.getStringValue(SetAppMqttActivity.this, AppConstants.SP_KEY_MQTT_CONFIG, "");
+                    if (TextUtils.isEmpty(mqttConfigStr)) {
+                        startActivity(new Intent(SetAppMqttActivity.this, SetDeviceMqttActivity.class));
+                    }
+                    dismissLoadingProgressDialog();
+                    SetAppMqttActivity.this.finish();
+                }
+            }
+        }
+    };
 
     private void initData() {
         etMqttHost.setText(mqttConfig.host);
@@ -160,13 +190,16 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
         etKeepAlive.postDelayed(new Runnable() {
             @Override
             public void run() {
-                dismissLoadingProgressDialog();
                 startService(new Intent(SetAppMqttActivity.this, MokoService.class));
-                ToastUtils.showToast(SetAppMqttActivity.this, getString(R.string.success));
-                SetAppMqttActivity.this.finish();
             }
         }, 2000);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
     }
 
     public void cleanSession(View view) {
