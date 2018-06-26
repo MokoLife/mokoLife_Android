@@ -78,6 +78,7 @@ public class DBTools {
                     .getColumnIndex(DBConstants.DEVICE_FIELD_SPECIFICATIONS));
             mokoDevice.mac = cursor.getString(cursor
                     .getColumnIndex(DBConstants.DEVICE_FIELD_MAC));
+            break;
         }
         return mokoDevice;
     }
