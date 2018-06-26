@@ -120,7 +120,7 @@ public class Utils {
         }
         if (packInfo != null) {
             String version = packInfo.versionName;
-            return String.format("v%s", version);
+            return version;
         }
         return "";
     }

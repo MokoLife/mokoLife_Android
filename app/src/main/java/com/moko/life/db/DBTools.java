@@ -61,6 +61,27 @@ public class DBTools {
         return mokoDevices;
     }
 
+    public MokoDevice selectDevice(String mac) {
+        Cursor cursor = db.query(DBConstants.TABLE_NAME_DEVICE, null, DBConstants.DEVICE_FIELD_MAC + " = ?", new String[]{mac}, null, null, null);
+        MokoDevice mokoDevice = null;
+        while (cursor.moveToFirst()) {
+            mokoDevice = new MokoDevice();
+            mokoDevice.id = cursor.getInt(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_ID));
+            mokoDevice.function = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_FUNCTION));
+            mokoDevice.name = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_NAME));
+            mokoDevice.nickName = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_NICK_NAME));
+            mokoDevice.specifications = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_SPECIFICATIONS));
+            mokoDevice.mac = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_MAC));
+        }
+        return mokoDevice;
+    }
+
 
     public void updateDevice(MokoDevice mokoDevice) {
         String where = DBConstants.DEVICE_FIELD_MAC + " = ?";

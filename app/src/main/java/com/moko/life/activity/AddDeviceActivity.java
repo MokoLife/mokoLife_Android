@@ -214,15 +214,23 @@ public class AddDeviceActivity extends BaseActivity {
                         @Override
                         public void run() {
                             dismissConnMqttDialog();
-                            MokoDevice device = new MokoDevice();
-                            device.name = mDeviceResult.device_name;
-                            device.nickName = mDeviceResult.device_name;
-                            device.specifications = mDeviceResult.device_specifications;
-                            device.function = mDeviceResult.device_function;
-                            device.mac = mDeviceResult.device_mac;
-                            DBTools.getInstance(AddDeviceActivity.this).insertDevice(device);
+                            MokoDevice mokoDevice = DBTools.getInstance(AddDeviceActivity.this).selectDevice(mDeviceResult.device_mac);
+                            if (mokoDevice == null) {
+                                mokoDevice = new MokoDevice();
+                                mokoDevice.name = mDeviceResult.device_name;
+                                mokoDevice.nickName = mDeviceResult.device_name;
+                                mokoDevice.specifications = mDeviceResult.device_specifications;
+                                mokoDevice.function = mDeviceResult.device_function;
+                                mokoDevice.mac = mDeviceResult.device_mac;
+                                DBTools.getInstance(AddDeviceActivity.this).insertDevice(mokoDevice);
+                            } else {
+                                mokoDevice.name = mDeviceResult.device_name;
+                                mokoDevice.specifications = mDeviceResult.device_specifications;
+                                mokoDevice.function = mDeviceResult.device_function;
+                                DBTools.getInstance(AddDeviceActivity.this).updateDevice(mokoDevice);
+                            }
                             Intent modifyIntent = new Intent(AddDeviceActivity.this, ModifyNameActivity.class);
-                            modifyIntent.putExtra("mokodevice", device);
+                            modifyIntent.putExtra("mokodevice", mokoDevice);
                             startActivity(modifyIntent);
                         }
                     }, 500);
@@ -266,7 +274,7 @@ public class AddDeviceActivity extends BaseActivity {
                             dialog.dismiss();
                         }
                     })
-                    .setNegativeButton(R.string.connect, new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.confirm, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // 跳转系统WIFI页面

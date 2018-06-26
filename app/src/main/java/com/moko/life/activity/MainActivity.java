@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                 if (state == 0) {
                     title = getString(R.string.mqtt_connecting);
                 } else if(state == 1){
-                    title = getString(R.string.mqtt_connected);
+                    title = getString(R.string.guide_center);
                 } else if(state == 2){
                     title = getString(R.string.mqtt_connect_failed);
                 }

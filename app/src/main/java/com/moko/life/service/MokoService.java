@@ -115,18 +115,34 @@ public class MokoService extends Service {
         }
 
         public boolean isServerTrusted(X509Certificate[] certs) {
+            LogModule.i("isServerTrusted");
+            for (java.security.cert.X509Certificate certificate : certs) {
+                LogModule.w("Accepting:" + certificate);
+            }
             return true;
         }
 
         public boolean isClientTrusted(X509Certificate[] certs) {
+            LogModule.i("isClientTrusted");
+            for (java.security.cert.X509Certificate certificate : certs) {
+                LogModule.w("Accepting:" + certificate);
+            }
             return true;
         }
 
         public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+            LogModule.i("Server authtype=" + authType);
+            for (java.security.cert.X509Certificate certificate : certs) {
+                LogModule.w("Accepting:" + certificate);
+            }
             return;
         }
 
         public void checkClientTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+            LogModule.i("Client authtype=" + authType);
+            for (java.security.cert.X509Certificate certificate : certs) {
+                LogModule.w("Accepting:" + certificate);
+            }
             return;
         }
     }
