@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -60,6 +61,8 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
     EditText etKeepAlive;
     @Bind(R.id.title)
     TextView title;
+    @Bind(R.id.rl_client_id)
+    RelativeLayout rlClientId;
 
     private String[] mQosArray = new String[]{"0", "1", "2"};
 
@@ -73,6 +76,7 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
         ButterKnife.bind(this);
         String mqttConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
         title.setText(R.string.settings_mqtt_app);
+        rlClientId.setVisibility(View.VISIBLE);
         if (TextUtils.isEmpty(mqttConfigStr)) {
             mqttConfig = new MQTTConfig();
             mqttConfig.clientId = UUID.randomUUID().toString().replaceAll("-", "");

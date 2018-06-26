@@ -56,7 +56,6 @@ public class MokoDevice implements Serializable {
         if (subscribeTopics == null) {
             subscribeTopics = new ArrayList<>();
             subscribeTopics.add(getDeviceTopicSwitchState());
-            subscribeTopics.add(getDeviceTopicFirmwareInfo());
             subscribeTopics.add(getDeviceTopicDelayTime());
             subscribeTopics.add(getDeviceTopicUpgradeState());
             subscribeTopics.add(getDeviceTopicDeleteDevice());

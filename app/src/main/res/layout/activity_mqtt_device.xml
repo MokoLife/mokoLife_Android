@@ -243,12 +243,14 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_client_id"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:paddingBottom="5dp"
         android:paddingLeft="21dp"
         android:paddingRight="21dp"
-        android:paddingTop="5dp">
+        android:paddingTop="5dp"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"

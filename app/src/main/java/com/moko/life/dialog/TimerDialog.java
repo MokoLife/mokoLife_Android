@@ -45,13 +45,22 @@ public class TimerDialog extends BaseDialog<Boolean> {
     private void initWheelView() {
         ArrayList<String> hour = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
-            hour.add(i + " hour");
+            if (i > 1) {
+                hour.add(i + " hours");
+            } else {
+                hour.add(i + " hour");
+            }
         }
         wvHour.setData(hour);
         wvHour.setDefault(0);
         ArrayList<String> minute = new ArrayList<>();
         for (int i = 0; i < 60; i++) {
-            minute.add(i + " min");
+            if (i > 1) {
+                minute.add(i + " mins");
+            } else {
+                minute.add(i + " min");
+
+            }
         }
         wvMinute.setData(minute);
         wvMinute.setDefault(0);
