@@ -16,6 +16,16 @@ import com.moko.support.log.LogModule;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 
 /**
  * @Date 2017/12/7 0007
@@ -57,6 +67,22 @@ public class MokoService extends Service {
                 connOpts.setKeepAliveInterval(mqttConfig.keepAlive);
                 connOpts.setUserName(mqttConfig.username);
                 connOpts.setPassword(mqttConfig.password.toCharArray());
+                if (mqttConfig.connectMode == 1) {
+                    TrustManager[] trustAllCerts = new TrustManager[1];
+                    TrustManager tm = new AllTM();
+                    trustAllCerts[0] = tm;
+                    SSLContext sc = null;
+                    try {
+                        sc = SSLContext.getInstance("SSL");
+                        sc.init(null, trustAllCerts, null);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (KeyManagementException e) {
+                        e.printStackTrace();
+                    }
+                    SocketFactory factory = sc.getSocketFactory();
+                    connOpts.setSocketFactory(factory);
+                }
                 try {
                     MokoSupport.getInstance().connectMqtt(connOpts);
                 } catch (MqttException e) {
@@ -81,5 +107,27 @@ public class MokoService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    static class AllTM implements TrustManager, X509TrustManager {
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+
+        public boolean isServerTrusted(X509Certificate[] certs) {
+            return true;
+        }
+
+        public boolean isClientTrusted(X509Certificate[] certs) {
+            return true;
+        }
+
+        public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+            return;
+        }
+
+        public void checkClientTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+            return;
+        }
     }
 }

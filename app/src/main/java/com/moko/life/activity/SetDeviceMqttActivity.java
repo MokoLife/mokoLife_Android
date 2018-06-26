@@ -169,10 +169,14 @@ public class SetDeviceMqttActivity extends BaseActivity implements RadioGroup.On
         switch (checkedId) {
             case R.id.rb_conn_mode_tcp:
                 mqttConfig.connectMode = 0;
+                mqttConfig.port = "1883";
                 break;
             case R.id.rb_conn_mode_ssl:
                 mqttConfig.connectMode = 1;
+                mqttConfig.port = "8883";
                 break;
         }
+        etMqttPort.setText(mqttConfig.port);
+        etMqttPort.setSelection(mqttConfig.port.length());
     }
 }
