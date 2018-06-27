@@ -69,7 +69,7 @@ public class ActionListener implements IMqttActionListener {
                 connect();
                 break;
             case SUBSCRIBE:
-                subscribe();
+                subscribe(asyncActionToken.getTopics()[0]);
                 break;
             case PUBLISH:
                 publish();
@@ -98,9 +98,10 @@ public class ActionListener implements IMqttActionListener {
      * object associated with the client this action belongs to and then notify
      * the user of success
      */
-    private void subscribe() {
-        LogModule.i(TAG + ":subscribe Success");
+    private void subscribe(String topic) {
+        LogModule.i(TAG + ":" + topic + ":subscribe Success");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_SUBSCRIBE);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC, topic);
         intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 1);
         context.sendBroadcast(intent);
     }

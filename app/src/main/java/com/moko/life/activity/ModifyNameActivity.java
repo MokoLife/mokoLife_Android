@@ -37,7 +37,7 @@ public class ModifyNameActivity extends BaseActivity {
         setContentView(R.layout.activity_modify_device_name);
         ButterKnife.bind(this);
         device = (MokoDevice) getIntent().getSerializableExtra("mokodevice");
-        etNickName.setText(device.name);
+        etNickName.setText(device.nickName);
         etNickName.setSelection(device.name.length());
     }
 

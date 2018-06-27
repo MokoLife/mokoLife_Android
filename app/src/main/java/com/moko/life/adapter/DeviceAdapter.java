@@ -40,6 +40,7 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
     private void setView(DeviceViewHolder holder, final MokoDevice device) {
         if (!device.isOnline) {
             holder.ivSwitch.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.checkbox_close));
+            holder.tvDeviceName.setText(device.nickName);
             holder.tvDeviceSwitch.setText(mContext.getString(R.string.device_state_offline));
             holder.tvDeviceSwitch.setTextColor(ContextCompat.getColor(mContext, R.color.grey_cccccc));
         } else {

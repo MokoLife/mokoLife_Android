@@ -167,8 +167,6 @@ public class AddDeviceActivity extends BaseActivity {
                         case MokoConstants.HEADER_SET_WIFI_INFO:
                             // 设置成功，保存数据，网络可用后订阅mqtt主题
                             isSettingSuccess = true;
-                            dismissLoadingProgressDialog();
-                            showConnMqttDialog();
                             break;
                     }
                 } else {
@@ -181,17 +179,13 @@ public class AddDeviceActivity extends BaseActivity {
                     LogModule.i("连接MQTT成功");
                     // 订阅设备主题
                     String topicSwitchState = mTopicPre + "switch_state";
-                    String topicFirmwareInfo = mTopicPre + "firmware_infor";
                     String topicDelayTime = mTopicPre + "delay_time";
-                    String topicOTAUpgradeState = mTopicPre + "ota_upgrade_state";
                     String topicDeleteDevice = mTopicPre + "delete_device";
                     String topicElectricityInfo = mTopicPre + "electricity_information";
                     // 订阅
                     try {
                         MokoSupport.getInstance().subscribe(topicSwitchState, mAppMqttConfig.qos);
-                        MokoSupport.getInstance().subscribe(topicFirmwareInfo, mAppMqttConfig.qos);
                         MokoSupport.getInstance().subscribe(topicDelayTime, mAppMqttConfig.qos);
-                        MokoSupport.getInstance().subscribe(topicOTAUpgradeState, mAppMqttConfig.qos);
                         MokoSupport.getInstance().subscribe(topicDeleteDevice, mAppMqttConfig.qos);
                         MokoSupport.getInstance().subscribe(topicElectricityInfo, mAppMqttConfig.qos);
                     } catch (MqttException e) {
@@ -204,8 +198,7 @@ public class AddDeviceActivity extends BaseActivity {
                 if (TextUtils.isEmpty(topic) || isDeviceConnectSuccess) {
                     return;
                 }
-                String topicSwitchState = mTopicPre + "switch_state";
-                if (topicSwitchState.equals(topic)) {
+                if (topic.contains(mTopicPre)) {
                     isDeviceConnectSuccess = true;
                     donutProgress.setProgress(100);
                     donutProgress.setText(100 + "%");
@@ -334,7 +327,7 @@ public class AddDeviceActivity extends BaseActivity {
                             return;
                         }
                         // 弹出加载弹框
-                        showLoadingProgressDialog(getString(R.string.wifi_connecting));
+                        showConnMqttDialog();
                         // 连接设备
                         mService.startSocket();
 

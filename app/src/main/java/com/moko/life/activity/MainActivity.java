@@ -1,13 +1,10 @@
 package com.moko.life.activity;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -75,7 +72,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             lvDeviceList.setVisibility(View.VISIBLE);
             rlEmpty.setVisibility(View.GONE);
         }
-        mHandler =  new OfflineHandler(this);
+        mHandler = new OfflineHandler(this);
         // 注册广播接收器
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
@@ -96,9 +93,9 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                 String title = "";
                 if (state == 0) {
                     title = getString(R.string.mqtt_connecting);
-                } else if(state == 1){
+                } else if (state == 1) {
                     title = getString(R.string.guide_center);
-                } else if(state == 2){
+                } else if (state == 2) {
                     title = getString(R.string.mqtt_connect_failed);
                 }
                 tvTitle.setText(title);
@@ -133,36 +130,39 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                 if (devices.isEmpty()) {
                     return;
                 }
+                for (final MokoDevice device : devices) {
+                    // 启动设备定时离线，5s收不到应答则认为离线
+                    if (topic.contains(device.getTopicPre())) {
+                        device.isOnline = true;
+                        if (mHandler.hasMessages(device.id)) {
+                            mHandler.removeMessages(device.id);
+                        }
+                        Message message = Message.obtain(mHandler, new Runnable() {
+                            @Override
+                            public void run() {
+                                device.isOnline = false;
+                                device.on_off = false;
+                                LogModule.i(device.mac + "离线");
+                                adapter.notifyDataSetChanged();
+                                Intent i = new Intent(AppConstants.ACTION_DEVICE_STATE);
+                                MainActivity.this.sendBroadcast(i);
+                            }
+                        });
+                        message.what = device.id;
+                        mHandler.sendMessageDelayed(message, 5000);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
                 if (topic.contains(MokoDevice.DEVICE_TOPIC_SWITCH_STATE)) {
                     String receive = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(receive).getAsJsonObject();
                     String switch_state = object.get("switch_state").getAsString();
                     for (final MokoDevice device : devices) {
-                        if (device.getDeviceTopicSwitchState().equals(topic)) {
-                            device.isOnline = true;
-                            if (mHandler.hasMessages(device.id)) {
-                                mHandler.removeMessages(device.id);
-                            }
-                            Message message = Message.obtain(mHandler, new Runnable() {
-                                @Override
-                                public void run() {
-                                    device.isOnline = false;
-                                    device.on_off = false;
-                                    LogModule.i(device.mac + "离线");
-                                    adapter.notifyDataSetChanged();
-                                    Intent i = new Intent(AppConstants.ACTION_DEVICE_STATE);
-                                    MainActivity.this.sendBroadcast(i);
-                                }
-                            });
-                            message.what = device.id;
-                            mHandler.sendMessageDelayed(message, 5000);
-                            // 启动设备定时离线，5s收不到应答则认为离线
-                            if (!switch_state.equals(device.on_off ? "on" : "off")) {
-                                device.on_off = !device.on_off;
-                            }
-                            adapter.notifyDataSetChanged();
-                            break;
+                        if (!switch_state.equals(device.on_off ? "on" : "off")) {
+                            device.on_off = !device.on_off;
                         }
+                        adapter.notifyDataSetChanged();
+                        break;
                     }
                 }
             }
