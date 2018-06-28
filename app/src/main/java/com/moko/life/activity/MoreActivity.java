@@ -173,7 +173,7 @@ public class MoreActivity extends BaseActivity {
                         json.addProperty("type", 0);
                         json.addProperty("realm", "23.83.237.116");
                         json.addProperty("port", 80);
-                        json.addProperty("catalogue", "wp-content/uploads/smartplug/");
+                        json.addProperty("catalogue", "smartplug/20180623/");
                         MqttMessage message = new MqttMessage();
                         message.setPayload(json.toString().getBytes());
                         message.setQos(appMqttConfig.qos);

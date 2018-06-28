@@ -195,7 +195,7 @@ public class AddDeviceActivity extends BaseActivity {
             }
             if (action.equals(MokoConstants.ACTION_MQTT_RECEIVE)) {
                 String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
-                if (TextUtils.isEmpty(topic) || isDeviceConnectSuccess) {
+                if (TextUtils.isEmpty(topic) || TextUtils.isEmpty(mTopicPre) || isDeviceConnectSuccess) {
                     return;
                 }
                 if (topic.contains(mTopicPre)) {
