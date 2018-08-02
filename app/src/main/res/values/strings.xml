@@ -69,8 +69,9 @@
 
     <string name="modify_device_name_conn_success">Connection successful</string>
     <string name="modify_device_name_done">Done</string>
-    <string name="modify_device_name_empty">Name can\'t be null</string>
+    <string name="modify_device_name_empty">Device name can\'t be blank</string>
     <string name="device_detail_switch_off">Socket is off</string>
+    <string name="device_detail_switch_offline">Socket is offline</string>
     <string name="device_detail_switch_on">Socket is on</string>
     <string name="device_detail_schedule">Schedule</string>
     <string name="device_detail_timer">Timer</string>
@@ -106,6 +107,7 @@
     <string name="device_info_date">Date of Manufacture</string>
     <string name="device_info_name">Device Name</string>
     <string name="device_info_version">Firmware Version</string>
+    <string name="device_info_mac">Device Mac</string>
 
 
 </resources>

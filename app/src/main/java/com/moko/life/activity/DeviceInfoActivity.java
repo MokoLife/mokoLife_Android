@@ -28,6 +28,8 @@ public class DeviceInfoActivity extends BaseActivity {
     TextView tvDeviceName;
     @Bind(R.id.tv_device_version)
     TextView tvDeviceVersion;
+    @Bind(R.id.tv_device_mac)
+    TextView tvDeviceMac;
     private MokoDevice mokoDevice;
 
     @Override
@@ -41,6 +43,7 @@ public class DeviceInfoActivity extends BaseActivity {
             tvDeviceDate.setText(mokoDevice.production_date);
             tvDeviceName.setText(mokoDevice.product_model);
             tvDeviceVersion.setText(mokoDevice.firmware_version);
+            tvDeviceMac.setText(mokoDevice.mac);
         }
 
     }

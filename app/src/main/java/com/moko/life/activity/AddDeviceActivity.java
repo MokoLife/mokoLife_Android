@@ -198,7 +198,7 @@ public class AddDeviceActivity extends BaseActivity {
                 if (TextUtils.isEmpty(topic) || TextUtils.isEmpty(mTopicPre) || isDeviceConnectSuccess) {
                     return;
                 }
-                if (topic.contains(mTopicPre)) {
+                if (topic.contains(mTopicPre) && !isDeviceConnectSuccess) {
                     isDeviceConnectSuccess = true;
                     donutProgress.setProgress(100);
                     donutProgress.setText(100 + "%");

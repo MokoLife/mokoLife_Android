@@ -130,39 +130,36 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                 if (devices.isEmpty()) {
                     return;
                 }
-                for (final MokoDevice device : devices) {
-                    // 启动设备定时离线，5s收不到应答则认为离线
-                    if (topic.contains(device.getTopicPre())) {
-                        device.isOnline = true;
-                        if (mHandler.hasMessages(device.id)) {
-                            mHandler.removeMessages(device.id);
-                        }
-                        Message message = Message.obtain(mHandler, new Runnable() {
-                            @Override
-                            public void run() {
-                                device.isOnline = false;
-                                device.on_off = false;
-                                LogModule.i(device.mac + "离线");
-                                adapter.notifyDataSetChanged();
-                                Intent i = new Intent(AppConstants.ACTION_DEVICE_STATE);
-                                MainActivity.this.sendBroadcast(i);
-                            }
-                        });
-                        message.what = device.id;
-                        mHandler.sendMessageDelayed(message, 5000);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
                 if (topic.contains(MokoDevice.DEVICE_TOPIC_SWITCH_STATE)) {
                     String receive = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(receive).getAsJsonObject();
                     String switch_state = object.get("switch_state").getAsString();
                     for (final MokoDevice device : devices) {
-                        if (!switch_state.equals(device.on_off ? "on" : "off")) {
-                            device.on_off = !device.on_off;
+                        if (device.getDeviceTopicSwitchState().equals(topic)) {
+                            device.isOnline = true;
+                            if (mHandler.hasMessages(device.id)) {
+                                mHandler.removeMessages(device.id);
+                            }
+                            Message message = Message.obtain(mHandler, new Runnable() {
+                                @Override
+                                public void run() {
+                                    device.isOnline = false;
+                                    device.on_off = false;
+                                    LogModule.i(device.mac + "离线");
+                                    adapter.notifyDataSetChanged();
+                                    Intent i = new Intent(AppConstants.ACTION_DEVICE_STATE);
+                                    MainActivity.this.sendBroadcast(i);
+                                }
+                            });
+                            message.what = device.id;
+                            mHandler.sendMessageDelayed(message, 62 * 1000);
+                            // 启动设备定时离线，62s收不到应答则认为离线
+                            if (!switch_state.equals(device.on_off ? "on" : "off")) {
+                                device.on_off = !device.on_off;
+                            }
+                            adapter.notifyDataSetChanged();
+                            break;
                         }
-                        adapter.notifyDataSetChanged();
-                        break;
                     }
                 }
             }

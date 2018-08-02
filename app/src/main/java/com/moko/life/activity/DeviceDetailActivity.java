@@ -94,6 +94,7 @@ public class DeviceDetailActivity extends BaseActivity {
                     if (!switch_state.equals(mokoDevice.on_off ? "on" : "off")) {
                         mokoDevice.on_off = !mokoDevice.on_off;
                         changeSwitchState();
+                        tvTimerState.setVisibility(View.GONE);
                     }
                 }
                 if (topic.equals(mokoDevice.getDeviceTopicDelayTime())) {
@@ -129,7 +130,7 @@ public class DeviceDetailActivity extends BaseActivity {
         rlTitle.setBackgroundColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.black_303a4b));
         llBg.setBackgroundColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.grey_f2f2f2 : R.color.black_303a4b));
         ivSwitchState.setImageDrawable(ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.switch_on : R.drawable.switch_off));
-        tvSwitchState.setText(mokoDevice.on_off ? R.string.device_detail_switch_on : R.string.device_detail_switch_off);
+        tvSwitchState.setText(mokoDevice.isOnline ? (mokoDevice.on_off ? R.string.device_detail_switch_on : R.string.device_detail_switch_off) : R.string.device_detail_switch_offline);
         tvSwitchState.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
         Drawable drawableSchedult = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.schedule_on : R.drawable.schedule_off);
         drawableSchedult.setBounds(0, 0, drawableSchedult.getMinimumWidth(), drawableSchedult.getMinimumHeight());

@@ -93,10 +93,15 @@ public class MoreActivity extends BaseActivity {
                     String production_date = object.get("production_date").getAsString();
                     String product_model = object.get("product_model").getAsString();
                     String firmware_version = object.get("firmware_version").getAsString();
+                    String firmwar_mac = "";
+                    if (object.get("device_mac") != null) {
+                        firmwar_mac = object.get("device_mac").getAsString();
+                    }
                     mokoDevice.company_name = company_name;
                     mokoDevice.production_date = production_date;
                     mokoDevice.product_model = product_model;
                     mokoDevice.firmware_version = firmware_version;
+                    mokoDevice.mac = firmwar_mac;
                     Intent i = new Intent(MoreActivity.this, DeviceInfoActivity.class);
                     i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mokoDevice);
                     startActivity(i);
@@ -123,7 +128,7 @@ public class MoreActivity extends BaseActivity {
             if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
                 if (state == 1) {
-                    if (currentTopic.equals(mokoDevice.getAppTopicReset())) {
+                    if (!TextUtils.isEmpty(currentTopic) && currentTopic.equals(mokoDevice.getAppTopicReset())) {
                         LogModule.i("重置设备成功");
                         // 取消订阅
                         for (String deviceTopic : mokoDevice.getDeviceTopics()) {
@@ -146,7 +151,7 @@ public class MoreActivity extends BaseActivity {
                         }, 500);
                         dismissLoadingProgressDialog();
                     }
-                    if (currentTopic.equals(mokoDevice.getAppTopicReadFirmwareInfor())) {
+                    if (!TextUtils.isEmpty(currentTopic) && currentTopic.equals(mokoDevice.getAppTopicReadFirmwareInfor())) {
                         dismissLoadingProgressDialog();
                     }
                 }
