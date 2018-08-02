@@ -59,7 +59,7 @@ public class MokoService extends Service {
         String mqttAppConfigStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
         if (!TextUtils.isEmpty(mqttAppConfigStr)) {
             MQTTConfig mqttConfig = new Gson().fromJson(mqttAppConfigStr, MQTTConfig.class);
-            if (!mqttConfig.isEmpty()) {
+            if (!mqttConfig.isError(null)) {
                 MokoSupport.getInstance().creatClient(mqttConfig.host, mqttConfig.port, mqttConfig.clientId, mqttConfig.connectMode == 1);
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setAutomaticReconnect(true);

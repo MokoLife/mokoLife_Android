@@ -136,17 +136,12 @@ public class SetDeviceMqttActivity extends BaseActivity implements RadioGroup.On
     public void saveSettings(View view) {
         mqttConfig.host = etMqttHost.getText().toString().replaceAll(" ", "");
         mqttConfig.port = etMqttPort.getText().toString();
-        mqttConfig.keepAlive = Integer.parseInt(etKeepAlive.getText().toString());
+        String keepAlive = etKeepAlive.getText().toString();
+        mqttConfig.keepAlive = Integer.parseInt(TextUtils.isEmpty(keepAlive) ? "0" : keepAlive);
         mqttConfig.clientId = etMqttClientId.getText().toString().replaceAll(" ", "");
         mqttConfig.username = etMqttUsername.getText().toString().replaceAll(" ", "");
         mqttConfig.password = etMqttPassword.getText().toString().replaceAll(" ", "");
-        if (mqttConfig.isEmpty()) {
-            ToastUtils.showToast(this, getString(R.string.mqtt_verify_empty));
-            return;
-        }
-        String port = etMqttPort.getText().toString();
-        if (Integer.parseInt(port) > 65535) {
-            ToastUtils.showToast(this, getString(R.string.mqtt_verify_port));
+        if (mqttConfig.isError(this)) {
             return;
         }
         String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);

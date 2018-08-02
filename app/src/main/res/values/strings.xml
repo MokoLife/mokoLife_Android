@@ -45,8 +45,14 @@
     <string name="mqtt_client_id">Client Id</string>
     <string name="mqtt_username">Username</string>
     <string name="mqtt_Password">Password</string>
-    <string name="mqtt_verify_empty">Params can\'t be null</string>
-    <string name="mqtt_verify_port">Port is 0~65535</string>
+    <string name="mqtt_verify_client_id_empty">ClientId error</string>
+    <string name="mqtt_verify_host">Host error</string>
+    <string name="mqtt_verify_port">Port range : 0~65535</string>
+    <string name="mqtt_verify_port_empty">Port error</string>
+    <string name="mqtt_verify_keep_alive">Keep alive range : 60~120</string>
+    <string name="mqtt_verify_username">Username error</string>
+    <string name="mqtt_verify_password">Password error</string>
+    <string name="mqtt_verify_client_id">ClientId error</string>
     <string name="mqtt_verify_length">Length range is 0~32</string>
     <string name="success">Success</string>
     <string name="failed">Failed</string>
