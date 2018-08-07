@@ -161,6 +161,14 @@ public class DeviceDetailActivity extends BaseActivity {
         if (isWindowLocked()) {
             return;
         }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(DeviceDetailActivity.this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(DeviceDetailActivity.this, R.string.device_offline);
+            return;
+        }
         TimerDialog dialog = new TimerDialog(this);
         dialog.setData(mokoDevice.on_off);
         dialog.setListener(new TimerDialog.TimerListener() {

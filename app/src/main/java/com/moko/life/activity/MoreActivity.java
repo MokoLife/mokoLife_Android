@@ -307,6 +307,10 @@ public class MoreActivity extends BaseActivity {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(this, R.string.device_offline);
+            return;
+        }
         showLoadingProgressDialog(getString(R.string.wait));
         LogModule.i("重置设备");
 
