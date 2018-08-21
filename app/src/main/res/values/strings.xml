@@ -114,6 +114,7 @@
     <string name="device_info_name">Device Name</string>
     <string name="device_info_version">Firmware Version</string>
     <string name="device_info_mac">Device Mac</string>
+    <string name="device_info_no_statistics">The device does not have this function</string>
 
 
 </resources>

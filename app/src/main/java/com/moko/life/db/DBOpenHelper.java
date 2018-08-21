@@ -9,7 +9,7 @@ import com.moko.support.log.LogModule;
 public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "moko_life";
     // 数据库版本号
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private Context mContext;
 
@@ -29,6 +29,13 @@ public class DBOpenHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        LogModule.i("数据库升级");
+        LogModule.i("旧版本:" + oldVersion + ";新版本:" + newVersion);
+        if (oldVersion < 2) {
+            LogModule.i("新增订单号字段");
+            String sql_upgrade = "ALTER TABLE " + DBConstants.TABLE_NAME_DEVICE + " ADD " + DBConstants.DEVICE_FIELD_TYPE + " TEXT";
+            db.execSQL(sql_upgrade);
+        }
     }
 
     /**
@@ -55,6 +62,8 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             + DBConstants.DEVICE_FIELD_NICK_NAME + " TEXT,"
             // 规格
             + DBConstants.DEVICE_FIELD_SPECIFICATIONS + " TEXT,"
+            // 类型
+            + DBConstants.DEVICE_FIELD_TYPE + " TEXT,"
             // MAC
             + DBConstants.DEVICE_FIELD_MAC + " TEXT);";
 

@@ -34,6 +34,7 @@ public class DBTools {
         cv.put(DBConstants.DEVICE_FIELD_NICK_NAME, mokoDevice.nickName);
         cv.put(DBConstants.DEVICE_FIELD_SPECIFICATIONS, mokoDevice.specifications);
         cv.put(DBConstants.DEVICE_FIELD_MAC, mokoDevice.mac);
+        cv.put(DBConstants.DEVICE_FIELD_TYPE, mokoDevice.type);
         long row = db.insert(DBConstants.TABLE_NAME_DEVICE, null, cv);
         return row;
     }
@@ -56,6 +57,8 @@ public class DBTools {
                     .getColumnIndex(DBConstants.DEVICE_FIELD_SPECIFICATIONS));
             mokoDevice.mac = cursor.getString(cursor
                     .getColumnIndex(DBConstants.DEVICE_FIELD_MAC));
+            mokoDevice.type = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_TYPE));
             mokoDevices.add(mokoDevice);
         }
         return mokoDevices;
@@ -78,6 +81,8 @@ public class DBTools {
                     .getColumnIndex(DBConstants.DEVICE_FIELD_SPECIFICATIONS));
             mokoDevice.mac = cursor.getString(cursor
                     .getColumnIndex(DBConstants.DEVICE_FIELD_MAC));
+            mokoDevice.type = cursor.getString(cursor
+                    .getColumnIndex(DBConstants.DEVICE_FIELD_TYPE));
             break;
         }
         return mokoDevice;

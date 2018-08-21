@@ -207,6 +207,10 @@ public class DeviceDetailActivity extends BaseActivity {
     }
 
     public void statisticsClick(View view) {
+        if (mokoDevice != null && "0".equals(mokoDevice.type)) {
+            ToastUtils.showToast(this, getString(R.string.device_info_no_statistics));
+            return;
+        }
         if (!MokoSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;

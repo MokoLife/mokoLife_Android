@@ -9,4 +9,5 @@ public class DBConstants {
     public static final String DEVICE_FIELD_NICK_NAME = "nick_name";
     public static final String DEVICE_FIELD_SPECIFICATIONS = "device_specifications";
     public static final String DEVICE_FIELD_MAC = "device_mac";
+    public static final String DEVICE_FIELD_TYPE = "device_type";
 }

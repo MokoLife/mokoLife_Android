@@ -215,11 +215,13 @@ public class AddDeviceActivity extends BaseActivity {
                                 mokoDevice.specifications = mDeviceResult.device_specifications;
                                 mokoDevice.function = mDeviceResult.device_function;
                                 mokoDevice.mac = mDeviceResult.device_mac;
+                                mokoDevice.type = mDeviceResult.device_type;
                                 DBTools.getInstance(AddDeviceActivity.this).insertDevice(mokoDevice);
                             } else {
                                 mokoDevice.name = mDeviceResult.device_name;
                                 mokoDevice.specifications = mDeviceResult.device_specifications;
                                 mokoDevice.function = mDeviceResult.device_function;
+                                mokoDevice.type = mDeviceResult.device_type;
                                 DBTools.getInstance(AddDeviceActivity.this).updateDevice(mokoDevice);
                             }
                             Intent modifyIntent = new Intent(AddDeviceActivity.this, ModifyNameActivity.class);
