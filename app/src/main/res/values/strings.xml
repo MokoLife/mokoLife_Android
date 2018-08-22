@@ -54,6 +54,7 @@
     <string name="mqtt_verify_password">Password error</string>
     <string name="mqtt_verify_client_id">ClientId error</string>
     <string name="mqtt_verify_length">Length range is 0~32</string>
+    <string name="mqtt_verify_catalogue">Catalogue error</string>
     <string name="success">Success</string>
     <string name="failed">Failed</string>
     <string name="switch_on">On</string>

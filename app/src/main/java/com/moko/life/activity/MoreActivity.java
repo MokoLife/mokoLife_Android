@@ -109,21 +109,6 @@ public class MoreActivity extends BaseActivity {
                 if (topic.equals(mokoDevice.getDeviceTopicSwitchState())) {
                     mokoDevice.isOnline = true;
                 }
-                if (topic.equals(mokoDevice.getDeviceTopicUpgradeState())) {
-                    String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
-                    JsonObject object = new JsonParser().parse(message).getAsJsonObject();
-                    String ota_result = object.get("ota_result").getAsString();
-                    if ("R1".equals(ota_result)) {
-                        ToastUtils.showToast(MoreActivity.this, R.string.success);
-                    } else if ("R3".equals(ota_result) || "R4".equals(ota_result)) {
-                        ToastUtils.showToast(MoreActivity.this, R.string.failed);
-                    }
-                    try {
-                        MokoSupport.getInstance().unSubscribe(mokoDevice.getDeviceTopicUpgradeState());
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
             if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
@@ -170,21 +155,6 @@ public class MoreActivity extends BaseActivity {
                         currentTopic = mokoDevice.getAppTopicReadFirmwareInfor();
                         try {
                             MokoSupport.getInstance().publish(mokoDevice.getAppTopicReadFirmwareInfor(), message);
-                        } catch (MqttException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (topic.equals(mokoDevice.getDeviceTopicUpgradeState())) {
-                        JsonObject json = new JsonObject();
-                        json.addProperty("type", 0);
-                        json.addProperty("realm", "23.83.237.116");
-                        json.addProperty("port", 80);
-                        json.addProperty("catalogue", "smartplug/20180623/");
-                        MqttMessage message = new MqttMessage();
-                        message.setPayload(json.toString().getBytes());
-                        message.setQos(appMqttConfig.qos);
-                        currentTopic = mokoDevice.getAppTopicUpgrade();
-                        try {
-                            MokoSupport.getInstance().publish(mokoDevice.getAppTopicUpgrade(), message);
                         } catch (MqttException e) {
                             e.printStackTrace();
                         }
@@ -265,13 +235,9 @@ public class MoreActivity extends BaseActivity {
             ToastUtils.showToast(this, R.string.device_offline);
             return;
         }
-        LogModule.i("升级固件");
-        showLoadingProgressDialog(getString(R.string.wait));
-        try {
-            MokoSupport.getInstance().subscribe(mokoDevice.getDeviceTopicUpgradeState(), appMqttConfig.qos);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(this, CheckFirmwareUpdateActivity.class);
+        intent.putExtra(AppConstants.EXTRA_KEY_DEVICE, mokoDevice);
+        startActivity(intent);
     }
 
     public void removeDevice(View view) {
