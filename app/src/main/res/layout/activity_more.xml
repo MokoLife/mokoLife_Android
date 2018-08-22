@@ -41,6 +41,7 @@
         android:onClick="modifyName">
 
         <TextView
+            android:id="@+id/modify_device_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -57,8 +58,11 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="12dp"
+            android:layout_toRightOf="@id/modify_device_name"
             android:drawablePadding="10dp"
             android:drawableRight="@drawable/arrow_right"
+            android:gravity="right"
+            android:text=""
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 

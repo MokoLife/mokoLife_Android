@@ -321,18 +321,26 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        mWifiSSID = etSSID.getText().toString();
-                        mWifiPassword = etPassword.getText().toString();
-                        // 获取WIFI后，连接成功后发给设备
-                        if (TextUtils.isEmpty(mWifiSSID)) {
-                            ToastUtils.showToast(AddDeviceActivity.this, getString(R.string.wifi_verify_empty));
-                            return;
-                        }
-                        // 弹出加载弹框
-                        showConnMqttDialog();
-                        // 连接设备
-                        mService.startSocket();
-
+                        showLoadingProgressDialog(getString(R.string.wait));
+                        notBlinkingTips.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dismissLoadingProgressDialog();
+                                if (isWifiCorrect()) {
+                                    mWifiSSID = etSSID.getText().toString();
+                                    mWifiPassword = etPassword.getText().toString();
+                                    // 获取WIFI后，连接成功后发给设备
+                                    if (TextUtils.isEmpty(mWifiSSID)) {
+                                        ToastUtils.showToast(AddDeviceActivity.this, getString(R.string.wifi_verify_empty));
+                                        return;
+                                    }
+                                    // 弹出加载弹框
+                                    showConnMqttDialog();
+                                    // 连接设备
+                                    mService.startSocket();
+                                }
+                            }
+                        }, 2000);
                     }
                 })
                 .create();
