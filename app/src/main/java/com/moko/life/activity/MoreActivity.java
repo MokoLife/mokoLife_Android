@@ -20,6 +20,8 @@ import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
 import com.moko.life.db.DBTools;
 import com.moko.life.dialog.CustomDialog;
+import com.moko.life.dialog.RemoveDialog;
+import com.moko.life.dialog.ResetDialog;
 import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
 import com.moko.life.utils.SPUtiles;
@@ -241,53 +243,69 @@ public class MoreActivity extends BaseActivity {
     }
 
     public void removeDevice(View view) {
-        if (!MokoSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        showLoadingProgressDialog(getString(R.string.wait));
-        // 取消订阅
-        for (String topic : mokoDevice.getDeviceTopics()) {
-            try {
-                MokoSupport.getInstance().unSubscribe(topic);
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
-        }
-        LogModule.i("删除设备");
-        DBTools.getInstance(this).deleteDevice(mokoDevice);
-        tvDeviceName.postDelayed(new Runnable() {
+        RemoveDialog dialog = new RemoveDialog(this);
+        dialog.setListener(new RemoveDialog.RemoveListener() {
             @Override
-            public void run() {
-                dismissLoadingProgressDialog();
-                // 跳转首页，刷新数据
-                Intent intent = new Intent(MoreActivity.this, MainActivity.class);
-                intent.putExtra(AppConstants.EXTRA_KEY_FROM_ACTIVITY, TAG);
-                startActivity(intent);
+            public void onConfirmClick(RemoveDialog dialog) {
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(MoreActivity.this, R.string.network_error);
+                    return;
+                }
+                showLoadingProgressDialog(getString(R.string.wait));
+                // 取消订阅
+                for (String topic : mokoDevice.getDeviceTopics()) {
+                    try {
+                        MokoSupport.getInstance().unSubscribe(topic);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+                }
+                LogModule.i("删除设备");
+                DBTools.getInstance(MoreActivity.this).deleteDevice(mokoDevice);
+                tvDeviceName.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismissLoadingProgressDialog();
+                        // 跳转首页，刷新数据
+                        Intent intent = new Intent(MoreActivity.this, MainActivity.class);
+                        intent.putExtra(AppConstants.EXTRA_KEY_FROM_ACTIVITY, TAG);
+                        startActivity(intent);
+                    }
+                }, 500);
+                dialog.dismiss();
             }
-        }, 500);
+        });
+        dialog.show();
     }
 
     public void resetDevice(View view) {
-        if (!MokoSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        if (!mokoDevice.isOnline) {
-            ToastUtils.showToast(this, R.string.device_offline);
-            return;
-        }
-        showLoadingProgressDialog(getString(R.string.wait));
-        LogModule.i("重置设备");
+        ResetDialog dialog = new ResetDialog(this);
+        dialog.setListener(new ResetDialog.ResetListener() {
+            @Override
+            public void onConfirmClick(ResetDialog dialog) {
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(MoreActivity.this, R.string.network_error);
+                    return;
+                }
+                if (!mokoDevice.isOnline) {
+                    ToastUtils.showToast(MoreActivity.this, R.string.device_offline);
+                    return;
+                }
+                showLoadingProgressDialog(getString(R.string.wait));
+                LogModule.i("重置设备");
 
-        MqttMessage message = new MqttMessage();
-        message.setQos(appMqttConfig.qos);
-        currentTopic = mokoDevice.getAppTopicReset();
-        try {
-            MokoSupport.getInstance().publish(mokoDevice.getAppTopicReset(), message);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+                MqttMessage message = new MqttMessage();
+                message.setQos(appMqttConfig.qos);
+                currentTopic = mokoDevice.getAppTopicReset();
+                try {
+                    MokoSupport.getInstance().publish(mokoDevice.getAppTopicReset(), message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     @Override
