@@ -15,6 +15,13 @@ public class MokoConstants {
     public static final int CONN_STATUS_CONNECTING = 1;
     public static final int CONN_STATUS_FAILED = 2;
     public static final int CONN_STATUS_TIMEOUT = 3;
+    // mqtt conn status
+    public static final int MQTT_CONN_STATUS_LOST = 0;
+    public static final int MQTT_CONN_STATUS_SUCCESS = 1;
+    public static final int MQTT_CONN_STATUS_FAILED = 2;
+    // mqtt state
+    public static final int MQTT_STATE_SUCCESS = 1;
+    public static final int MQTT_STATE_FAILED = 0;
     // action
     public static final String ACTION_AP_CONNECTION = "com.moko.life.action.ACTION_AP_CONNECTION";
     public static final String ACTION_AP_SET_DATA_RESPONSE = "com.moko.life.action.ACTION_AP_SET_DATA_RESPONSE";

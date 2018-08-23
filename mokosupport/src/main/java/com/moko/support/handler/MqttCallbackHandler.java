@@ -49,7 +49,7 @@ public class MqttCallbackHandler implements MqttCallbackExtended {
     public void connectComplete(boolean reconnect, String serverURI) {
         LogModule.i(TAG + ":connectComplete:reconnect-->" + reconnect);
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 1);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, MokoConstants.MQTT_CONN_STATUS_SUCCESS);
         context.sendBroadcast(intent);
     }
 
@@ -60,7 +60,7 @@ public class MqttCallbackHandler implements MqttCallbackExtended {
     public void connectionLost(Throwable cause) {
         LogModule.i(TAG + ":connectionLost");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, MokoConstants.MQTT_CONN_STATUS_LOST);
         context.sendBroadcast(intent);
     }
 

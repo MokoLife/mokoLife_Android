@@ -99,7 +99,7 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
             String action = intent.getAction();
             if (MokoConstants.ACTION_MQTT_CONNECTION.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
-                if (state == 1) {
+                if (state == MokoConstants.MQTT_CONN_STATUS_SUCCESS) {
                     ToastUtils.showToast(SetAppMqttActivity.this, getString(R.string.success));
                     String mqttConfigStr = SPUtiles.getStringValue(SetAppMqttActivity.this, AppConstants.SP_KEY_MQTT_CONFIG, "");
                     if (TextUtils.isEmpty(mqttConfigStr)) {

@@ -91,11 +91,11 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
             if (MokoConstants.ACTION_MQTT_CONNECTION.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
                 String title = "";
-                if (state == 0) {
+                if (state == MokoConstants.MQTT_CONN_STATUS_LOST) {
                     title = getString(R.string.mqtt_connecting);
-                } else if (state == 1) {
+                } else if (state == MokoConstants.MQTT_CONN_STATUS_SUCCESS) {
                     title = getString(R.string.guide_center);
-                } else if (state == 2) {
+                } else if (state == MokoConstants.MQTT_CONN_STATUS_FAILED) {
                     title = getString(R.string.mqtt_connect_failed);
                 }
                 tvTitle.setText(title);

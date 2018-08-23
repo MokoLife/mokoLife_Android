@@ -114,7 +114,7 @@ public class MoreActivity extends BaseActivity {
             }
             if (MokoConstants.ACTION_MQTT_PUBLISH.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
-                if (state == 1) {
+                if (state == MokoConstants.MQTT_STATE_SUCCESS) {
                     if (!TextUtils.isEmpty(currentTopic) && currentTopic.equals(mokoDevice.getAppTopicReset())) {
                         LogModule.i("重置设备成功");
                         // 取消订阅
@@ -145,7 +145,7 @@ public class MoreActivity extends BaseActivity {
             }
             if (MokoConstants.ACTION_MQTT_SUBSCRIBE.equals(action)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
-                if (state == 1) {
+                if (state == MokoConstants.MQTT_STATE_SUCCESS) {
                     String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
                     if (TextUtils.isEmpty(topic)) {
                         return;

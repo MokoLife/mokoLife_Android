@@ -175,7 +175,7 @@ public class AddDeviceActivity extends BaseActivity {
             }
             if (action.equals(MokoConstants.ACTION_MQTT_CONNECTION)) {
                 int state = intent.getIntExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 0);
-                if (state == 1 && isSettingSuccess) {
+                if (state == MokoConstants.MQTT_CONN_STATUS_SUCCESS && isSettingSuccess) {
                     LogModule.i("连接MQTT成功");
                     // 订阅设备主题
                     String topicSwitchState = mTopicPre + "switch_state";

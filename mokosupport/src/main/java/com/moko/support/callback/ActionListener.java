@@ -89,7 +89,7 @@ public class ActionListener implements IMqttActionListener {
     private void publish() {
         LogModule.i(TAG + ":publish Success");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_PUBLISH);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 1);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_SUCCESS);
         context.sendBroadcast(intent);
     }
 
@@ -102,14 +102,14 @@ public class ActionListener implements IMqttActionListener {
         LogModule.i(TAG + ":" + topic + ":subscribe Success");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_SUBSCRIBE);
         intent.putExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC, topic);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 1);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_SUCCESS);
         context.sendBroadcast(intent);
     }
 
     private void unsubscribe() {
         LogModule.i(TAG + ":unsubscribe Success");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_UNSUBSCRIBE);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 1);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_SUCCESS);
         context.sendBroadcast(intent);
     }
 
@@ -155,7 +155,7 @@ public class ActionListener implements IMqttActionListener {
     private void publish(Throwable exception) {
         LogModule.i(TAG + ":publish Failed");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_PUBLISH);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_FAILED);
         context.sendBroadcast(intent);
         exception.printStackTrace();
     }
@@ -168,7 +168,7 @@ public class ActionListener implements IMqttActionListener {
     private void subscribe(Throwable exception) {
         LogModule.i(TAG + ":subscribe Failed");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_SUBSCRIBE);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_FAILED);
         context.sendBroadcast(intent);
         exception.printStackTrace();
     }
@@ -177,7 +177,7 @@ public class ActionListener implements IMqttActionListener {
     private void unsubscribe(Throwable exception) {
         LogModule.i(TAG + ":unsubscribe Failed");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_UNSUBSCRIBE);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, 0);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_FAILED);
         context.sendBroadcast(intent);
         exception.printStackTrace();
     }
@@ -190,7 +190,7 @@ public class ActionListener implements IMqttActionListener {
     private void connect(Throwable exception) {
         LogModule.i(TAG + ":connect Failed");
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
-        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, 2);
+        intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, MokoConstants.MQTT_CONN_STATUS_FAILED);
         context.sendBroadcast(intent);
         exception.printStackTrace();
     }
