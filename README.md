@@ -253,7 +253,9 @@ MQTT通信包含四种Action，执行每种Action都需要设置`ActionListener`
 
 	MokoSupport.getInstance().isConnected()
 	
+#### 2.2.7 断开连接
 
+	MokoSupport.getInstance().disconnectMqtt()
 	
 
 ## 3.Save Log to SD Card
