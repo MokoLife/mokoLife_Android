@@ -1,23 +1,23 @@
 ## 1.Import and use SDK
-### 1.1	导入module工程mokosupport
-### 1.2	配置settings.gradle文件，引用mokosupport工程：
+### 1.1	Import module project mokosupport
+### 1.2	Configure settings.gradle file and call mokosupport project:
 
 	include ':app',':mokosupport'
 
-### 1.3	编辑主工程的build.gradle文件：
+### 1.3	Edit the build.gradle file of the main project:
 
 	dependencies {
 	    compile fileTree(dir: 'libs', include: ['*.jar'])
 	    compile project(path: ': mokosupport')
 	}
 
-### 1.4	在工程初始化时导入sdk：
+### 1.4	Import SDK during project initialization:
 
 	public class BaseApplication extends Application {
 	    @Override
 	    public void onCreate() {
 	        super.onCreate();
-	        // 初始化
+	        // initialization
 	        MokoSupport.getInstance().init(getApplicationContext());
 	    }
 	}
@@ -25,48 +25,48 @@
 
 ## 2.Function Introduction
 
-- sdk中提供的方法包括：与WIFI设备的Socket通信，MQTT连接服务，断开连接，订阅主题，取消订阅主题，发布主题，日志记录等；
-- Socket通信通过`SocketService`调用；
-- MQTT通信可通过`MokoSupport.getInstance()`调用；
+- The methods provided in SDK include: Socket communication with WIFI device, MQTT connection service, disconnection, subscription topic, unsubscribe topic, post topic, log record, etc.
+- Socket communication is called by `SocketService`;
+- MQTT communication can be called by `MokoSupport.getInstance()`;
 
 ### 2.1 SocketService
 
-创建Socket连接前需要确认APP是否已连接上设备的WIFI，连接默认IP地址`192.168.4.1`，默认端口号`8266`，可在`SocketThread`中修改
+Before creating a Socket connection, you need to confirm whether the APP is connected to the WIFI of the device. Connect the default IP address `192.168.4.1`, the default port number is `8266`, which can be modified in `SocketThread`.
 
-#### 2.1.1 初始化
+#### 2.1.1 Initialization
 
 	bindService(new Intent(this, SocketService.class), mServiceConnection, BIND_AUTO_CREATE);
 
-启动SocketService，并获取SocketService对象，调用`mService.startSocket()`创建Socket线程，连接设备，连接成功后线程等待发送信息；
+Start SocketService, and get the SocketService object, call `mService.startSocket()` to create a Socket thread, connect the device, and the thread waits for the message to be sent after the connection is successful;
 
-#### 2.1.2 获取连接状态和应答
+#### 2.1.2 Get connection status and response
 
-1、通过注册广播获取连接状态：
+1. Get the connection status by registering the broadcast:
 
-广播ACTION：`MokoConstants.ACTION_AP_CONNECTION`
+Broadcast ACTION：`MokoConstants.ACTION_AP_CONNECTION`
 
-连接状态：
+Connection status：
 
-- 连接成功：`MokoConstants.CONN_STATUS_SUCCESS`
-- 连接中：`MokoConstants.CONN_STATUS_CONNECTING`
-- 连接失败：`MokoConstants.CONN_STATUS_FAILED`
-- 连接超时：`MokoConstants.CONN_STATUS_TIMEOUT`
+- Connection successful：`MokoConstants.CONN_STATUS_SUCCESS`
+- connecting：`MokoConstants.CONN_STATUS_CONNECTING`
+- Connection failed：`MokoConstants.CONN_STATUS_FAILED`
+- Connection timeout：`MokoConstants.CONN_STATUS_TIMEOUT`
 
-2、通过注册广播获取Socket通信应答：
+2、Get the Socket communication response by registering the broadcast :
 
-广播ACTION：`MokoConstants.ACTION_AP_SET_DATA_RESPONSE`
+Broadcast ACTION：`MokoConstants.ACTION_AP_SET_DATA_RESPONSE`
 
-获取应答：
+Get a response：
 
 	DeviceResponse response = (DeviceResponse) intent.getSerializableExtra(MokoConstants.EXTRA_AP_SET_DATA_RESPONSE);
 
-#### 2.1.3 Socket通信
+#### 2.1.3 Socket
 
-发送数据只接受JSON格式的字符串
+Send data only accepts strings in JSON format
 
 eg:
 
-1、获取设备信息：
+1、Get device information：
 
 	{ 
 	          "header" : 4001
@@ -87,7 +87,7 @@ response：
 	     } 
 	 }
 	 
-2、	发送MQTT服务器信息
+2、	Send MQTT server information
 
 	{ 
 	          "header" : 4002, 
@@ -111,7 +111,7 @@ response：
 	     } 
 	 }
 	 
-3、发送特定SSID的WIFI网络
+3、Send a WIFI network with a specific SSID
 
 	{ 
 	          "header" : 4003, 
@@ -134,17 +134,17 @@ response:
 
 ### 2.2	MokoSupport
 
-#### 2.2.1 连接MQTT服务器
+#### 2.2.1 Connect to the MQTT server
 
-1、创建`MqttAndroidClient`
+1、Create `MqttAndroidClient`
 
 	public void creatClient(String host, String port, String clientId, boolean tlsConnection)
 	
-2、连接服务器
+2、Connect to the server
 
 	public void connectMqtt(MqttConnectOptions options)
 	
-根据`MqttCallbackHandler`获取创建状态，接收服务器返回数据
+ Get the creation status according to `MqttCallbackHandler` and receive the return data form server
 
 	@Override
     public void connectComplete(boolean reconnect, String serverURI) {
@@ -159,25 +159,25 @@ response:
         ...
     }
     
-3、通过注册广播获取连接状态：
+3、Get the connection status by registering the broadcast:
 
-广播ACTION：`MokoConstants.ACTION_MQTT_CONNECTION`
+Broadcast ACTION：`MokoConstants.ACTION_MQTT_CONNECTION`
 
-连接状态：
+Connection status：
 
-- 连接成功：`MokoConstants.MQTT_CONN_STATUS_SUCCESS`
-- 连接断开：`MokoConstants.MQTT_CONN_STATUS_LOST`
+- Connection success：`MokoConstants.MQTT_CONN_STATUS_SUCCESS`
+- Disconnect：`MokoConstants.MQTT_CONN_STATUS_LOST`
 
-4、通过注册广播接收服务器返回数据
+4、Receive the return data from server by registering the broadcast
 
-广播ACTION：`MokoConstants.ACTION_MQTT_RECEIVE`
+Broadcast ACTION：`MokoConstants.ACTION_MQTT_RECEIVE`
 
-返回数据：
+Return data：
 
-- 返回数据Topic：`MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC`
-- 返回数据Message：`MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE`
+- Return data Topic：`MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC`
+- Return data Message：`MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE`
 
-返回数据是JSON格式，eg：
+The return data is in JSON format,eg：
 
 	{ 
 	          "company_name" : "moko", 
@@ -187,9 +187,9 @@ response:
 	          "device_mac" : "11:22:33:44:55:66"
 	 }
 
-#### 2.2.2 Action监听
+#### 2.2.2 Action monitor
 
-MQTT通信包含四种Action，执行每种Action都需要设置`ActionListener`，以此来监听Action的状态：
+MQTT communication contains four kinds of Actions. To execute each Action, you need to set `ActionListener` to monitor the state of the Action:
 
 	public enum Action {
 	        /**
@@ -210,68 +210,69 @@ MQTT通信包含四种Action，执行每种Action都需要设置`ActionListener`
 	        UNSUBSCRIBE
 	    }
 	    
-通过注册广播获取Action状态：
+	    
+Get the Action status by registering the broadcast:
 
 1、CONNECT
 	
-广播ACTION：`MokoConstants.ACTION_MQTT_CONNECTION`
+Broadcast ACTION：`MokoConstants.ACTION_MQTT_CONNECTION`
 
-- 连接失败：`MokoConstants.MQTT_CONN_STATUS_FAILED`
+- Connection failed：`MokoConstants.MQTT_CONN_STATUS_FAILED`
 
 2、SUBSCRIBE
 
-广播ACTION：`MokoConstants.ACTION_MQTT_SUBSCRIBE`
+Broadcast ACTION：`MokoConstants.ACTION_MQTT_SUBSCRIBE`
 
-- 订阅Topic：`MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC`
-- 订阅状态：`MokoConstants.EXTRA_MQTT_STATE`
+- Subscribe Topic：`MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC`
+- Subscribe status：`MokoConstants.EXTRA_MQTT_STATE`
 
 3、PUBLISH
 
-广播ACTION：`MokoConstants.ACTION_MQTT_PUBLISH`
+Broadcast ACTION：`MokoConstants.ACTION_MQTT_PUBLISH`
 
-- 发布状态：`MokoConstants.EXTRA_MQTT_STATE`
+- Publish status：`MokoConstants.EXTRA_MQTT_STATE`
 
 4、UNSUBSCRIBE
 
-广播ACTION：`MokoConstants.ACTION_MQTT_UNSUBSCRIBE`
+Broadcast ACTION：`MokoConstants.ACTION_MQTT_UNSUBSCRIBE`
 
-- 取消订阅状态：`MokoConstants.EXTRA_MQTT_STATE`
+- Unsubscribe status：`MokoConstants.EXTRA_MQTT_STATE`
 
-#### 2.2.3 订阅主题
+#### 2.2.3 Subscribe topic
 
 	MokoSupport.getInstance().subscribe(String topic, int qos)
 	
-#### 2.2.4 发布信息
+#### 2.2.4 Publish information
 
 	MokoSupport.getInstance().publish(String topic, MqttMessage message)
 
-#### 2.2.5 取消订阅主题
+#### 2.2.5 Unsubscribe topic
 
 	MokoSupport.getInstance().unSubscribe(String topic)
 	
-#### 2.2.6 判断MQTT是否连接
+#### 2.2.6 Determine whether the MQTT is connected
 
 	MokoSupport.getInstance().isConnected()
 	
-#### 2.2.7 断开连接
+#### 2.2.7 Disconnection
 
 	MokoSupport.getInstance().disconnectMqtt()
 	
 
 ## 3.Save Log to SD Card
 
-- SDK中集成了Log保存到SD卡的功能，引用的是[https://github.com/elvishew/xLog](https://github.com/elvishew/xLog "XLog")
-- 初始化方法在`MokoSupport.getInstance().init(getApplicationContext())`中实现
-- 可修改在SD卡上保存的文件名夹名和文件名
+- SDK integrates the Log saved to the SD card function, is called [https://github.com/elvishew/xLog](https://github.com/elvishew/xLog "XLog")
+- initialization method in `MokoSupport.getInstance().init(getApplicationContext())`
+- The folder name and file name saved on the SD card can be modified.
 
 		public class LogModule {
-			private static final String TAG = "mokoLife";// 文件名
-		    private static final String LOG_FOLDER = "mokoLife";// 文件夹名
+			private static final String TAG = "mokoLife";// file name 
+		    private static final String LOG_FOLDER = "mokoLife";// folder name
 			...
 		}
 
-- 存储策略：仅保存当天数据和前一天数据，前一天数据以.bak为后缀
-- 调用方式：
+- Storage strategy: only store the data of the day and the data of the day before , the file is suffixed with.bak
+- call method：
 	- LogModule.v("log info");
 	- LogModule.d("log info");
 	- LogModule.i("log info");
