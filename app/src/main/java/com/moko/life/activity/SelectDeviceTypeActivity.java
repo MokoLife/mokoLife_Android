@@ -31,6 +31,10 @@ public class SelectDeviceTypeActivity extends BaseActivity {
     }
 
     public void addMokoPlug(View view) {
-        startActivity(new Intent(this, AddDeviceActivity.class));
+        startActivity(new Intent(this, AddMokoPlugActivity.class));
+    }
+
+    public void addMokoWallSwitch(View view) {
+        startActivity(new Intent(this, AddWallSwitchActivity.class));
     }
 }

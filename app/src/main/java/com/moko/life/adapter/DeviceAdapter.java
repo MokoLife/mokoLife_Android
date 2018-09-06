@@ -25,7 +25,6 @@ import butterknife.ButterKnife;
  */
 public class DeviceAdapter extends BaseAdapter<MokoDevice> {
 
-
     public DeviceAdapter(Context context) {
         super(context);
     }
@@ -38,6 +37,20 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
     }
 
     private void setView(DeviceViewHolder holder, final MokoDevice device) {
+        if ("iot_wall_switch".equals(device.function)) {
+            holder.ivDevice.setImageResource(R.drawable.device_wall_switch);
+            holder.ivSwitch.setVisibility(View.GONE);
+            holder.ivSwitch.setOnClickListener(null);
+        } else if ("iot_plug".equals(device.function)) {
+            holder.ivDevice.setImageResource(R.drawable.device_moko_plug);
+            holder.ivSwitch.setVisibility(View.VISIBLE);
+            holder.ivSwitch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.deviceSwitchClick(device);
+                }
+            });
+        }
         if (!device.isOnline) {
             holder.ivSwitch.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.checkbox_close));
             holder.tvDeviceName.setText(device.nickName);
@@ -49,12 +62,7 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
             holder.tvDeviceSwitch.setText(device.on_off ? mContext.getString(R.string.switch_on) : mContext.getString(R.string.switch_off));
             holder.tvDeviceSwitch.setTextColor(ContextCompat.getColor(mContext, device.on_off ? R.color.blue_0188cc : R.color.grey_cccccc));
         }
-        holder.ivSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.deviceSwitchClick(device);
-            }
-        });
+
         holder.rlDeviceDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +82,8 @@ public class DeviceAdapter extends BaseAdapter<MokoDevice> {
     }
 
     static class DeviceViewHolder extends ViewHolder {
+        @Bind(R.id.iv_device)
+        ImageView ivDevice;
         @Bind(R.id.rl_device_detail)
         RelativeLayout rlDeviceDetail;
         @Bind(R.id.tv_device_name)

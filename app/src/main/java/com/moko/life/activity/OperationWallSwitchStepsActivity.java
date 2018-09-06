@@ -12,14 +12,14 @@ import butterknife.ButterKnife;
  * @Date 2018/6/11
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.life.activity.OperationStepsActivity
+ * @ClassPath com.moko.life.activity.OperationWallSwitchStepsActivity
  */
-public class OperationStepsActivity extends BaseActivity {
+public class OperationWallSwitchStepsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_operation_steps);
+        setContentView(R.layout.activity_plug_operation_steps);
         ButterKnife.bind(this);
     }
 

@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.lzyzsd.circleprogress.DonutProgress;
@@ -44,9 +45,9 @@ import butterknife.ButterKnife;
  * @Date 2018/6/7
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.life.activity.AddDeviceActivity
+ * @ClassPath com.moko.life.activity.AddMokoPlugActivity
  */
-public class AddDeviceActivity extends BaseActivity {
+public class AddMokoPlugActivity extends BaseActivity {
 
 
     @Bind(R.id.not_blinking_tips)
@@ -67,7 +68,7 @@ public class AddDeviceActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_device);
+        setContentView(R.layout.activity_add_moko_plug);
         ButterKnife.bind(this);
         notBlinkingTips.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         notBlinkingTips.getPaint().setAntiAlias(true);//抗锯齿
@@ -170,7 +171,7 @@ public class AddDeviceActivity extends BaseActivity {
                             break;
                     }
                 } else {
-                    ToastUtils.showToast(AddDeviceActivity.this, response.message);
+                    ToastUtils.showToast(AddMokoPlugActivity.this, response.message);
                 }
             }
             if (action.equals(MokoConstants.ACTION_MQTT_CONNECTION)) {
@@ -207,7 +208,7 @@ public class AddDeviceActivity extends BaseActivity {
                         @Override
                         public void run() {
                             dismissConnMqttDialog();
-                            MokoDevice mokoDevice = DBTools.getInstance(AddDeviceActivity.this).selectDevice(mDeviceResult.device_mac);
+                            MokoDevice mokoDevice = DBTools.getInstance(AddMokoPlugActivity.this).selectDevice(mDeviceResult.device_mac);
                             if (mokoDevice == null) {
                                 mokoDevice = new MokoDevice();
                                 mokoDevice.name = mDeviceResult.device_name;
@@ -216,15 +217,15 @@ public class AddDeviceActivity extends BaseActivity {
                                 mokoDevice.function = mDeviceResult.device_function;
                                 mokoDevice.mac = mDeviceResult.device_mac;
                                 mokoDevice.type = mDeviceResult.device_type;
-                                DBTools.getInstance(AddDeviceActivity.this).insertDevice(mokoDevice);
+                                DBTools.getInstance(AddMokoPlugActivity.this).insertDevice(mokoDevice);
                             } else {
                                 mokoDevice.name = mDeviceResult.device_name;
                                 mokoDevice.specifications = mDeviceResult.device_specifications;
                                 mokoDevice.function = mDeviceResult.device_function;
                                 mokoDevice.type = mDeviceResult.device_type;
-                                DBTools.getInstance(AddDeviceActivity.this).updateDevice(mokoDevice);
+                                DBTools.getInstance(AddMokoPlugActivity.this).updateDevice(mokoDevice);
                             }
-                            Intent modifyIntent = new Intent(AddDeviceActivity.this, ModifyNameActivity.class);
+                            Intent modifyIntent = new Intent(AddMokoPlugActivity.this, ModifyNameActivity.class);
                             modifyIntent.putExtra("mokodevice", mokoDevice);
                             startActivity(modifyIntent);
                         }
@@ -242,10 +243,10 @@ public class AddDeviceActivity extends BaseActivity {
      * @Date 2018/6/12
      * @Author wenzheng.liu
      * @Description 查看打开AP步骤
-     * @ClassPath com.moko.life.activity.AddDeviceActivity
+     * @ClassPath com.moko.life.activity.AddMokoPlugActivity
      */
     public void notBlinking(View view) {
-        startActivityForResult(new Intent(this, OperationStepsActivity.class), AppConstants.REQUEST_CODE_OPERATION_STEP);
+        startActivityForResult(new Intent(this, OperationPlugStepsActivity.class), AppConstants.REQUEST_CODE_OPERATION_STEP);
     }
 
     /**
@@ -261,6 +262,8 @@ public class AddDeviceActivity extends BaseActivity {
     private void checkWifiInfo() {
         if (!isWifiCorrect()) {
             View wifiAlertView = LayoutInflater.from(this).inflate(R.layout.wifi_setting_content, null);
+            ImageView iv_wifi_alert = ButterKnife.findById(wifiAlertView, R.id.iv_wifi_alert);
+            iv_wifi_alert.setImageResource(R.drawable.plug_wifi_alert);
             wifiAlertDialog = new CustomDialog.Builder(this)
                     .setContentView(wifiAlertView)
                     .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -331,7 +334,7 @@ public class AddDeviceActivity extends BaseActivity {
                                     mWifiPassword = etPassword.getText().toString();
                                     // 获取WIFI后，连接成功后发给设备
                                     if (TextUtils.isEmpty(mWifiSSID)) {
-                                        ToastUtils.showToast(AddDeviceActivity.this, getString(R.string.wifi_verify_empty));
+                                        ToastUtils.showToast(AddMokoPlugActivity.this, getString(R.string.wifi_verify_empty));
                                         return;
                                     }
                                     // 弹出加载弹框
@@ -384,7 +387,7 @@ public class AddDeviceActivity extends BaseActivity {
                 if (!isDeviceConnectSuccess) {
                     isDeviceConnectSuccess = true;
                     dismissConnMqttDialog();
-                    ToastUtils.showToast(AddDeviceActivity.this, getString(R.string.mqtt_connecting_timeout));
+                    ToastUtils.showToast(AddMokoPlugActivity.this, getString(R.string.mqtt_connecting_timeout));
                 }
             }
         }, 90 * 1000);

@@ -30,7 +30,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.AddDeviceActivity"
+            android:name=".activity.AddMokoPlugActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -42,7 +42,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.OperationStepsActivity"
+            android:name=".activity.OperationPlugStepsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -74,6 +74,10 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activity.CheckFirmwareUpdateActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.AddWallSwitchActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 

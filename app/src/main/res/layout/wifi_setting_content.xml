@@ -51,6 +51,7 @@
         android:textSize="15sp" />
 
     <ImageView
+        android:id="@+id/iv_wifi_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="17dp"
