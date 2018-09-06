@@ -62,14 +62,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/step1_1" />
+            android:src="@drawable/plug_step1_1" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="80dp"
-            android:src="@drawable/step1_2" />
+            android:src="@drawable/plug_step1_2" />
     </LinearLayout>
 
     <View
@@ -104,14 +104,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/step2_1" />
+            android:src="@drawable/plug_step2_1" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="80dp"
-            android:src="@drawable/step2_2" />
+            android:src="@drawable/plug_step2_2" />
     </LinearLayout>
 
     <View

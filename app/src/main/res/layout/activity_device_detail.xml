@@ -52,7 +52,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="112dp"
         android:onClick="switchClick"
-        android:src="@drawable/switch_on" />
+        android:src="@drawable/plug_switch_on" />
 
     <TextView
         android:id="@+id/tv_switch_state"

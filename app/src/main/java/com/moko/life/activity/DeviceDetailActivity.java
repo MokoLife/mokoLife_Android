@@ -129,7 +129,7 @@ public class DeviceDetailActivity extends BaseActivity {
     private void changeSwitchState() {
         rlTitle.setBackgroundColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.black_303a4b));
         llBg.setBackgroundColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.grey_f2f2f2 : R.color.black_303a4b));
-        ivSwitchState.setImageDrawable(ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.switch_on : R.drawable.switch_off));
+        ivSwitchState.setImageDrawable(ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.plug_switch_on : R.drawable.plug_switch_off));
         tvSwitchState.setText(mokoDevice.isOnline ? (mokoDevice.on_off ? R.string.device_detail_switch_on : R.string.device_detail_switch_off) : R.string.device_detail_switch_offline);
         tvSwitchState.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
         Drawable drawableSchedult = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.schedule_on : R.drawable.schedule_off);

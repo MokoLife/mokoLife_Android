@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="17dp"
         android:layout_marginTop="17dp"
-        android:src="@drawable/wifi_alert" />
+        android:src="@drawable/plug_wifi_alert" />
 
     <TextView
         android:layout_width="wrap_content"

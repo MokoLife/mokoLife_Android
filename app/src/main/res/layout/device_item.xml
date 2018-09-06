@@ -30,7 +30,7 @@
             android:drawablePadding="14dp"
             android:drawableRight="@drawable/arrow_right"
             android:gravity="center_vertical"
-            android:text="Moko Plug"
+            android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="15sp" />
 
@@ -43,7 +43,7 @@
             android:layout_marginLeft="15dp"
             android:layout_toRightOf="@id/iv_device"
             android:gravity="center_vertical"
-            android:text="Moko Plug"
+            android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="15sp" />
     </RelativeLayout>
