@@ -55,11 +55,18 @@ public class MokoDevice implements Serializable {
 
     public ArrayList<String> getDeviceTopics() {
         if (subscribeTopics == null) {
-            subscribeTopics = new ArrayList<>();
-            subscribeTopics.add(getDeviceTopicSwitchState());
-            subscribeTopics.add(getDeviceTopicDelayTime());
-            subscribeTopics.add(getDeviceTopicDeleteDevice());
-            subscribeTopics.add(getDeviceTopicElectricityInformation());
+            if ("iot_wall_switch".equals(function)) {
+                subscribeTopics = new ArrayList<>();
+                subscribeTopics.add(getDeviceTopicSwitchState());
+                subscribeTopics.add(getDeviceTopicDelayTime());
+                subscribeTopics.add(getDeviceTopicDeleteDevice());
+            } else if ("iot_plug".equals(function)) {
+                subscribeTopics = new ArrayList<>();
+                subscribeTopics.add(getDeviceTopicSwitchState());
+                subscribeTopics.add(getDeviceTopicDelayTime());
+                subscribeTopics.add(getDeviceTopicDeleteDevice());
+                subscribeTopics.add(getDeviceTopicElectricityInformation());
+            }
         }
         return subscribeTopics;
     }

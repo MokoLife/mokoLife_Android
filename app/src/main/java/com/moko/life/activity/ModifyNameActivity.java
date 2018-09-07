@@ -13,7 +13,6 @@ import com.moko.life.base.BaseActivity;
 import com.moko.life.db.DBTools;
 import com.moko.life.entity.MokoDevice;
 import com.moko.life.utils.ToastUtils;
-import com.moko.support.MokoConstants;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,6 +29,7 @@ public class ModifyNameActivity extends BaseActivity {
     @Bind(R.id.et_nick_name)
     EditText etNickName;
     private MokoDevice device;
+    private String nickNameSuffix = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +37,13 @@ public class ModifyNameActivity extends BaseActivity {
         setContentView(R.layout.activity_modify_device_name);
         ButterKnife.bind(this);
         device = (MokoDevice) getIntent().getSerializableExtra("mokodevice");
-        etNickName.setText(device.nickName);
-        etNickName.setSelection(device.nickName.length());
+        if (device.nickName.contains("_")) {
+            etNickName.setText(device.nickName.split("_")[0]);
+            nickNameSuffix = device.nickName.substring(device.nickName.indexOf("_") - 1);
+        } else {
+            etNickName.setText(device.nickName);
+        }
+        etNickName.setSelection(etNickName.getText().toString().length());
     }
 
 
@@ -48,7 +53,7 @@ public class ModifyNameActivity extends BaseActivity {
             ToastUtils.showToast(this, R.string.modify_device_name_empty);
             return;
         }
-        device.nickName = nickName;
+        device.nickName = nickName + nickNameSuffix;
         DBTools.getInstance(this).updateDevice(device);
         // 跳转首页，刷新数据
         Intent intent = new Intent(this, MainActivity.class);

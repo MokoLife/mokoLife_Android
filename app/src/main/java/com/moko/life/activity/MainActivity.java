@@ -133,7 +133,6 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                 if (topic.contains(MokoDevice.DEVICE_TOPIC_SWITCH_STATE)) {
                     String receive = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(receive).getAsJsonObject();
-                    String switch_state = object.get("switch_state").getAsString();
                     for (final MokoDevice device : devices) {
                         if (device.getDeviceTopicSwitchState().equals(topic)) {
                             device.isOnline = true;
@@ -153,9 +152,18 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                             });
                             message.what = device.id;
                             mHandler.sendMessageDelayed(message, 62 * 1000);
-                            // 启动设备定时离线，62s收不到应答则认为离线
-                            if (!switch_state.equals(device.on_off ? "on" : "off")) {
-                                device.on_off = !device.on_off;
+                            if (topic.contains("iot_plug")) {
+                                String switch_state = object.get("switch_state").getAsString();
+                                // 启动设备定时离线，62s收不到应答则认为离线
+                                if (!switch_state.equals(device.on_off ? "on" : "off")) {
+                                    device.on_off = !device.on_off;
+                                }
+                            } else if (topic.contains("iot_wall_switch")) {
+                                String switch_state = object.get("switch_state_01").getAsString();
+                                // 启动设备定时离线，62s收不到应答则认为离线
+                                if (!switch_state.equals(device.on_off ? "on" : "off")) {
+                                    device.on_off = !device.on_off;
+                                }
                             }
                             adapter.notifyDataSetChanged();
                             break;
@@ -228,9 +236,15 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
     @Override
     public void deviceDetailClick(MokoDevice device) {
         LogModule.i("跳转详情");
-        Intent intent = new Intent(this, DeviceDetailActivity.class);
-        intent.putExtra(AppConstants.EXTRA_KEY_DEVICE, device);
-        startActivity(intent);
+        if ("iot_wall_switch".equals(device.function)) {
+            Intent intent = new Intent(this, WallSwitchDetailActivity.class);
+            intent.putExtra(AppConstants.EXTRA_KEY_DEVICE, device);
+            startActivity(intent);
+        } else if ("iot_plug".equals(device.function)) {
+            Intent intent = new Intent(this, MokoPlugDetailActivity.class);
+            intent.putExtra(AppConstants.EXTRA_KEY_DEVICE, device);
+            startActivity(intent);
+        }
     }
 
     @Override

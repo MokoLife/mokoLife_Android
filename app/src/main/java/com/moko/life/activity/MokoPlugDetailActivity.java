@@ -38,9 +38,9 @@ import butterknife.ButterKnife;
  * @Date 2018/6/7
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.life.activity.DeviceDetailActivity
+ * @ClassPath com.moko.life.activity.MokoPlugDetailActivity
  */
-public class DeviceDetailActivity extends BaseActivity {
+public class MokoPlugDetailActivity extends BaseActivity {
     @Bind(R.id.rl_title)
     RelativeLayout rlTitle;
     @Bind(R.id.iv_switch_state)
@@ -62,7 +62,7 @@ public class DeviceDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_detail);
+        setContentView(R.layout.activity_moko_plug_detail);
         ButterKnife.bind(this);
         if (getIntent().getExtras() != null) {
             mokoDevice = (MokoDevice) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_DEVICE);
@@ -162,11 +162,11 @@ public class DeviceDetailActivity extends BaseActivity {
             return;
         }
         if (!MokoSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(DeviceDetailActivity.this, R.string.network_error);
+            ToastUtils.showToast(MokoPlugDetailActivity.this, R.string.network_error);
             return;
         }
         if (!mokoDevice.isOnline) {
-            ToastUtils.showToast(DeviceDetailActivity.this, R.string.device_offline);
+            ToastUtils.showToast(MokoPlugDetailActivity.this, R.string.device_offline);
             return;
         }
         TimerDialog dialog = new TimerDialog(this);
@@ -175,18 +175,18 @@ public class DeviceDetailActivity extends BaseActivity {
             @Override
             public void onConfirmClick(TimerDialog dialog) {
                 if (!MokoSupport.getInstance().isConnected()) {
-                    ToastUtils.showToast(DeviceDetailActivity.this, R.string.network_error);
+                    ToastUtils.showToast(MokoPlugDetailActivity.this, R.string.network_error);
                     return;
                 }
                 if (!mokoDevice.isOnline) {
-                    ToastUtils.showToast(DeviceDetailActivity.this, R.string.device_offline);
+                    ToastUtils.showToast(MokoPlugDetailActivity.this, R.string.device_offline);
                     return;
                 }
                 showLoadingProgressDialog(getString(R.string.wait));
                 JsonObject json = new JsonObject();
                 json.addProperty("delay_hour", dialog.getWvHour());
                 json.addProperty("delay_minute", dialog.getWvMinute());
-                String mqttConfigAppStr = SPUtiles.getStringValue(DeviceDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+                String mqttConfigAppStr = SPUtiles.getStringValue(MokoPlugDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
                 MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
                 MqttMessage message = new MqttMessage();
                 message.setPayload(json.toString().getBytes());
@@ -235,7 +235,7 @@ public class DeviceDetailActivity extends BaseActivity {
         LogModule.i("切换开关");
         JsonObject json = new JsonObject();
         json.addProperty("switch_state", mokoDevice.on_off ? "off" : "on");
-        String mqttConfigAppStr = SPUtiles.getStringValue(DeviceDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        String mqttConfigAppStr = SPUtiles.getStringValue(MokoPlugDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
         MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
         MqttMessage message = new MqttMessage();
         message.setPayload(json.toString().getBytes());

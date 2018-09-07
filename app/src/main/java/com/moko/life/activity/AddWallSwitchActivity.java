@@ -210,7 +210,16 @@ public class AddWallSwitchActivity extends BaseActivity {
                             if (mokoDevice == null) {
                                 mokoDevice = new MokoDevice();
                                 mokoDevice.name = mDeviceResult.device_name;
-                                mokoDevice.nickName = mDeviceResult.device_name;
+                                int switchType = Integer.parseInt(mDeviceResult.device_type);
+                                StringBuffer stringBuffer = new StringBuffer(mDeviceResult.device_name);
+                                stringBuffer.append("_");
+                                for (int i = 0; i < switchType; i++) {
+                                    stringBuffer.append("Switch").append((i + 1) + "");
+                                    if (i < switchType - 1) {
+                                        stringBuffer.append("_");
+                                    }
+                                }
+                                mokoDevice.nickName = stringBuffer.toString();
                                 mokoDevice.specifications = mDeviceResult.device_specifications;
                                 mokoDevice.function = mDeviceResult.device_function;
                                 mokoDevice.mac = mDeviceResult.device_mac;
