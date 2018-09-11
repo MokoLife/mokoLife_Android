@@ -2,14 +2,16 @@ package com.moko.life.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ import com.google.gson.JsonParser;
 import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
+import com.moko.life.db.DBTools;
+import com.moko.life.dialog.CustomDialog;
 import com.moko.life.dialog.TimerDialog;
 import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
@@ -33,6 +37,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @Date 2018/6/7
@@ -41,23 +46,33 @@ import butterknife.ButterKnife;
  * @ClassPath com.moko.life.activity.WallSwitchDetailActivity
  */
 public class WallSwitchDetailActivity extends BaseActivity {
-    @Bind(R.id.rl_title)
-    RelativeLayout rlTitle;
-    @Bind(R.id.iv_switch_state)
-    ImageView ivSwitchState;
-    @Bind(R.id.tv_device_schedule)
-    TextView tvDeviceSchedule;
-    @Bind(R.id.tv_device_timer)
-    TextView tvDeviceTimer;
-    @Bind(R.id.tv_device_statistics)
-    TextView tvDeviceStatistics;
-    @Bind(R.id.ll_bg)
-    LinearLayout llBg;
-    @Bind(R.id.tv_switch_state)
-    TextView tvSwitchState;
-    @Bind(R.id.tv_timer_state)
-    TextView tvTimerState;
+    @Bind(R.id.iv_wall_switch_1)
+    ImageView ivWallSwitch1;
+    @Bind(R.id.tv_wall_switch_1_edit)
+    TextView tvWallSwitch1Edit;
+    @Bind(R.id.tv_wall_switch_1_timer_state)
+    TextView tvWallSwitch1TimerState;
+    @Bind(R.id.rl_wall_switch_1)
+    RelativeLayout rlWallSwitch1;
+    @Bind(R.id.iv_wall_switch_2)
+    ImageView ivWallSwitch2;
+    @Bind(R.id.tv_wall_switch_2_edit)
+    TextView tvWallSwitch2Edit;
+    @Bind(R.id.tv_wall_switch_2_timer_state)
+    TextView tvWallSwitch2TimerState;
+    @Bind(R.id.rl_wall_switch_2)
+    RelativeLayout rlWallSwitch2;
+    @Bind(R.id.iv_wall_switch_3)
+    ImageView ivWallSwitch3;
+    @Bind(R.id.tv_wall_switch_3_edit)
+    TextView tvWallSwitch3Edit;
+    @Bind(R.id.tv_wall_switch_3_timer_state)
+    TextView tvWallSwitch3TimerState;
+    @Bind(R.id.rl_wall_switch_3)
+    RelativeLayout rlWallSwitch3;
+
     private MokoDevice mokoDevice;
+    private int deviceType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,26 +105,110 @@ public class WallSwitchDetailActivity extends BaseActivity {
                     mokoDevice.isOnline = true;
                     String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(message).getAsJsonObject();
-                    String switch_state = object.get("switch_state").getAsString();
-                    if (!switch_state.equals(mokoDevice.on_off ? "on" : "off")) {
-                        mokoDevice.on_off = !mokoDevice.on_off;
-                        changeSwitchState();
-                        tvTimerState.setVisibility(View.GONE);
+                    String switch_state_1;
+                    String switch_state_2;
+                    String switch_state_3;
+                    switch (deviceType) {
+                        case 1:
+                            switch_state_1 = object.get("switch_state_01").getAsString();
+                            if (!switch_state_1.equals(mokoDevice.on_off_1 ? "on" : "off")) {
+                                mokoDevice.on_off_1 = "on".equals(switch_state_1);
+                                tvWallSwitch1TimerState.setVisibility(View.GONE);
+                            }
+                            break;
+                        case 2:
+                            switch_state_1 = object.get("switch_state_01").getAsString();
+                            if (!switch_state_1.equals(mokoDevice.on_off_1 ? "on" : "off")) {
+                                mokoDevice.on_off_1 = "on".equals(switch_state_1);
+                                tvWallSwitch1TimerState.setVisibility(View.GONE);
+                            }
+                            switch_state_2 = object.get("switch_state_02").getAsString();
+                            if (!switch_state_2.equals(mokoDevice.on_off_2 ? "on" : "off")) {
+                                mokoDevice.on_off_2 = "on".equals(switch_state_2);
+                                tvWallSwitch2TimerState.setVisibility(View.GONE);
+                            }
+                            break;
+                        case 3:
+                            switch_state_1 = object.get("switch_state_01").getAsString();
+                            if (!switch_state_1.equals(mokoDevice.on_off_1 ? "on" : "off")) {
+                                mokoDevice.on_off_1 = "on".equals(switch_state_1);
+                                tvWallSwitch1TimerState.setVisibility(View.GONE);
+                            }
+                            switch_state_2 = object.get("switch_state_02").getAsString();
+                            if (!switch_state_2.equals(mokoDevice.on_off_2 ? "on" : "off")) {
+                                mokoDevice.on_off_2 = "on".equals(switch_state_2);
+                                tvWallSwitch2TimerState.setVisibility(View.GONE);
+                            }
+                            switch_state_3 = object.get("switch_state_03").getAsString();
+                            if (!switch_state_3.equals(mokoDevice.on_off_3 ? "on" : "off")) {
+                                mokoDevice.on_off_3 = "on".equals(switch_state_3);
+                                tvWallSwitch3TimerState.setVisibility(View.GONE);
+                            }
+                            break;
                     }
+                    changeSwitchState();
                 }
                 if (topic.equals(mokoDevice.getDeviceTopicDelayTime())) {
                     String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(message).getAsJsonObject();
-                    int delay_hour = object.get("delay_hour").getAsInt();
-                    int delay_minute = object.get("delay_minute").getAsInt();
-                    int delay_second = object.get("delay_second").getAsInt();
-                    String switch_state = object.get("switch_state").getAsString();
-                    if (delay_hour == 0 && delay_minute == 0 && delay_second == 0) {
-                        tvTimerState.setVisibility(View.GONE);
-                    } else {
-                        tvTimerState.setVisibility(View.VISIBLE);
-                        String timer = String.format("%s after %d:%d:%d", switch_state, delay_hour, delay_minute, delay_second);
-                        tvTimerState.setText(timer);
+                    String delay_time_01;
+                    String delay_time_02;
+                    String delay_time_03;
+                    switch (deviceType) {
+                        case 1:
+                            delay_time_01 = object.get("delay_time_01").getAsString();
+                            if ("0:0:0".equals(delay_time_01)) {
+                                tvWallSwitch1TimerState.setVisibility(View.GONE);
+                            } else {
+                                tvWallSwitch1TimerState.setVisibility(View.VISIBLE);
+                                String timer = String.format("%s after %s", !mokoDevice.on_off_1 ? "on" : "off", delay_time_01);
+                                tvWallSwitch1TimerState.setText(timer);
+                            }
+                            break;
+                        case 2:
+                            delay_time_01 = object.get("delay_time_01").getAsString();
+                            if ("0:0:0".equals(delay_time_01)) {
+                                tvWallSwitch1TimerState.setVisibility(View.GONE);
+                            } else {
+                                tvWallSwitch1TimerState.setVisibility(View.VISIBLE);
+                                String timer = String.format("%s after %s", !mokoDevice.on_off_1 ? "on" : "off", delay_time_01);
+                                tvWallSwitch1TimerState.setText(timer);
+                            }
+                            delay_time_02 = object.get("delay_time_02").getAsString();
+                            if ("0:0:0".equals(delay_time_02)) {
+                                tvWallSwitch2TimerState.setVisibility(View.GONE);
+                            } else {
+                                tvWallSwitch2TimerState.setVisibility(View.VISIBLE);
+                                String timer = String.format("%s after %s", !mokoDevice.on_off_2 ? "on" : "off", delay_time_02);
+                                tvWallSwitch2TimerState.setText(timer);
+                            }
+                            break;
+                        case 3:
+                            delay_time_01 = object.get("delay_time_01").getAsString();
+                            if ("0:0:0".equals(delay_time_01)) {
+                                tvWallSwitch1TimerState.setVisibility(View.GONE);
+                            } else {
+                                tvWallSwitch1TimerState.setVisibility(View.VISIBLE);
+                                String timer = String.format("%s after %s", !mokoDevice.on_off_1 ? "on" : "off", delay_time_01);
+                                tvWallSwitch1TimerState.setText(timer);
+                            }
+                            delay_time_02 = object.get("delay_time_02").getAsString();
+                            if ("0:0:0".equals(delay_time_02)) {
+                                tvWallSwitch2TimerState.setVisibility(View.GONE);
+                            } else {
+                                tvWallSwitch2TimerState.setVisibility(View.VISIBLE);
+                                String timer = String.format("%s after %s", !mokoDevice.on_off_2 ? "on" : "off", delay_time_02);
+                                tvWallSwitch2TimerState.setText(timer);
+                            }
+                            delay_time_03 = object.get("delay_time_03").getAsString();
+                            if ("0:0:0".equals(delay_time_03)) {
+                                tvWallSwitch3TimerState.setVisibility(View.GONE);
+                            } else {
+                                tvWallSwitch3TimerState.setVisibility(View.VISIBLE);
+                                String timer = String.format("%s after %s", !mokoDevice.on_off_3 ? "on" : "off", delay_time_03);
+                                tvWallSwitch3TimerState.setText(timer);
+                            }
+                            break;
                     }
                 }
             }
@@ -118,33 +217,39 @@ public class WallSwitchDetailActivity extends BaseActivity {
                 dismissLoadingProgressDialog();
             }
             if (AppConstants.ACTION_DEVICE_STATE.equals(action)) {
-                mokoDevice.isOnline = false;
-                mokoDevice.on_off = false;
-                tvTimerState.setVisibility(View.GONE);
-                changeSwitchState();
+                String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
+                if (topic.equals(mokoDevice.getDeviceTopicSwitchState())) {
+                    mokoDevice.isOnline = false;
+                    mokoDevice.on_off_1 = false;
+                    mokoDevice.on_off_2 = false;
+                    mokoDevice.on_off_3 = false;
+                    tvWallSwitch1TimerState.setVisibility(View.GONE);
+                    tvWallSwitch2TimerState.setVisibility(View.GONE);
+                    tvWallSwitch3TimerState.setVisibility(View.GONE);
+                    changeSwitchState();
+                }
             }
         }
     };
 
     private void changeSwitchState() {
-        rlTitle.setBackgroundColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.black_303a4b));
-        llBg.setBackgroundColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.grey_f2f2f2 : R.color.black_303a4b));
-        ivSwitchState.setImageDrawable(ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.plug_switch_on : R.drawable.plug_switch_off));
-        tvSwitchState.setText(mokoDevice.isOnline ? (mokoDevice.on_off ? R.string.device_detail_switch_on : R.string.device_detail_switch_off) : R.string.device_detail_switch_offline);
-        tvSwitchState.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
-        Drawable drawableSchedult = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.schedule_on : R.drawable.schedule_off);
-        drawableSchedult.setBounds(0, 0, drawableSchedult.getMinimumWidth(), drawableSchedult.getMinimumHeight());
-        tvDeviceSchedule.setCompoundDrawables(null, drawableSchedult, null, null);
-        tvDeviceSchedule.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
-        Drawable drawableTimer = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.timer_on : R.drawable.timer_off);
-        drawableTimer.setBounds(0, 0, drawableTimer.getMinimumWidth(), drawableTimer.getMinimumHeight());
-        tvDeviceTimer.setCompoundDrawables(null, drawableTimer, null, null);
-        tvDeviceTimer.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
-        Drawable drawableStatistics = ContextCompat.getDrawable(this, mokoDevice.on_off ? R.drawable.statistics_on : R.drawable.statistics_off);
-        drawableStatistics.setBounds(0, 0, drawableStatistics.getMinimumWidth(), drawableStatistics.getMinimumHeight());
-        tvDeviceStatistics.setCompoundDrawables(null, drawableStatistics, null, null);
-        tvDeviceStatistics.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
-        tvTimerState.setTextColor(ContextCompat.getColor(this, mokoDevice.on_off ? R.color.blue_0188cc : R.color.grey_808080));
+        deviceType = Integer.parseInt(mokoDevice.type);
+        String nickName = mokoDevice.nickName;
+        if (deviceType == 1) {
+            tvWallSwitch1Edit.setText(nickName.split("_")[1]);
+        } else if (deviceType == 2) {
+            rlWallSwitch2.setVisibility(View.VISIBLE);
+            tvWallSwitch2Edit.setText(nickName.split("_")[2]);
+        } else if (deviceType == 3) {
+            rlWallSwitch3.setVisibility(View.VISIBLE);
+            tvWallSwitch3Edit.setText(nickName.split("_")[3]);
+        }
+        rlWallSwitch1.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_1) ? R.color.white_ffffff : R.color.grey_e0e0e0));
+        ivWallSwitch1.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_1) ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
+        rlWallSwitch2.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_2) ? R.color.white_ffffff : R.color.grey_e0e0e0));
+        ivWallSwitch2.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_2) ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
+        rlWallSwitch3.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_3) ? R.color.white_ffffff : R.color.grey_e0e0e0));
+        ivWallSwitch3.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_3) ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
     }
 
     public void back(View view) {
@@ -157,7 +262,219 @@ public class WallSwitchDetailActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public void timerClick(View view) {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+    }
+
+    public void onClickAllOff(View view) {
+        if (isWindowLocked()) {
+            return;
+        }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+            return;
+        }
+        showLoadingProgressDialog(getString(R.string.wait));
+        LogModule.i("切换开关");
+        JsonObject json = new JsonObject();
+        switch (deviceType) {
+            case 1:
+                json.addProperty("switch_state_01", "off");
+                break;
+            case 2:
+                json.addProperty("switch_state_01", "off");
+                json.addProperty("switch_state_02", "off");
+                break;
+            case 3:
+                json.addProperty("switch_state_01", "off");
+                json.addProperty("switch_state_02", "off");
+                json.addProperty("switch_state_03", "off");
+                break;
+        }
+        String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        MqttMessage message = new MqttMessage();
+        message.setPayload(json.toString().getBytes());
+        message.setQos(appMqttConfig.qos);
+        try {
+            MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onClickAllOn(View view) {
+        if (isWindowLocked()) {
+            return;
+        }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+            return;
+        }
+        showLoadingProgressDialog(getString(R.string.wait));
+        LogModule.i("切换开关");
+        JsonObject json = new JsonObject();
+        switch (deviceType) {
+            case 1:
+                json.addProperty("switch_state_01", "on");
+                break;
+            case 2:
+                json.addProperty("switch_state_01", "on");
+                json.addProperty("switch_state_02", "on");
+                break;
+            case 3:
+                json.addProperty("switch_state_01", "on");
+                json.addProperty("switch_state_02", "on");
+                json.addProperty("switch_state_03", "on");
+                break;
+        }
+        String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        MqttMessage message = new MqttMessage();
+        message.setPayload(json.toString().getBytes());
+        message.setQos(appMqttConfig.qos);
+        try {
+            MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @OnClick({R.id.tv_wall_switch_1_schedule, R.id.tv_wall_switch_2_schedule, R.id.tv_wall_switch_3_schedule})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_wall_switch_1_schedule:
+                ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
+                break;
+            case R.id.tv_wall_switch_2_schedule:
+                ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
+                break;
+            case R.id.tv_wall_switch_3_schedule:
+                ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
+                break;
+        }
+    }
+
+    public void onClickWallSwitch1(View view) {
+        if (isWindowLocked()) {
+            return;
+        }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+            return;
+        }
+        showLoadingProgressDialog(getString(R.string.wait));
+        LogModule.i("切换开关");
+        JsonObject json = new JsonObject();
+        switch (deviceType) {
+            case 1:
+                json.addProperty("switch_state_01", mokoDevice.on_off_1 ? "off" : "on");
+                break;
+            case 2:
+                json.addProperty("switch_state_01", mokoDevice.on_off_1 ? "off" : "on");
+                json.addProperty("switch_state_02", mokoDevice.on_off_2 ? "on" : "off");
+                break;
+            case 3:
+                json.addProperty("switch_state_01", mokoDevice.on_off_1 ? "off" : "on");
+                json.addProperty("switch_state_02", mokoDevice.on_off_2 ? "on" : "off");
+                json.addProperty("switch_state_03", mokoDevice.on_off_3 ? "on" : "off");
+                break;
+        }
+        String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        MqttMessage message = new MqttMessage();
+        message.setPayload(json.toString().getBytes());
+        message.setQos(appMqttConfig.qos);
+        try {
+            MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onClickWallSwitch2(View view) {
+        if (isWindowLocked()) {
+            return;
+        }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+            return;
+        }
+        showLoadingProgressDialog(getString(R.string.wait));
+        LogModule.i("切换开关");
+        JsonObject json = new JsonObject();
+        switch (deviceType) {
+            case 2:
+                json.addProperty("switch_state_01", mokoDevice.on_off_1 ? "on" : "off");
+                json.addProperty("switch_state_02", mokoDevice.on_off_2 ? "off" : "on");
+                break;
+            case 3:
+                json.addProperty("switch_state_01", mokoDevice.on_off_1 ? "on" : "off");
+                json.addProperty("switch_state_02", mokoDevice.on_off_2 ? "off" : "on");
+                json.addProperty("switch_state_03", mokoDevice.on_off_3 ? "on" : "off");
+                break;
+        }
+        String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        MqttMessage message = new MqttMessage();
+        message.setPayload(json.toString().getBytes());
+        message.setQos(appMqttConfig.qos);
+        try {
+            MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onClickWallSwitch3(View view) {
+        if (isWindowLocked()) {
+            return;
+        }
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+            return;
+        }
+        showLoadingProgressDialog(getString(R.string.wait));
+        LogModule.i("切换开关");
+        JsonObject json = new JsonObject();
+        json.addProperty("switch_state_01", mokoDevice.on_off_1 ? "on" : "off");
+        json.addProperty("switch_state_02", mokoDevice.on_off_2 ? "on" : "off");
+        json.addProperty("switch_state_03", mokoDevice.on_off_3 ? "off" : "on");
+        String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        MqttMessage message = new MqttMessage();
+        message.setPayload(json.toString().getBytes());
+        message.setQos(appMqttConfig.qos);
+        try {
+            MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onClickTimer1(View view) {
         if (isWindowLocked()) {
             return;
         }
@@ -170,7 +487,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
             return;
         }
         TimerDialog dialog = new TimerDialog(this);
-        dialog.setData(mokoDevice.on_off);
+        dialog.setData(mokoDevice.on_off_1);
         dialog.setListener(new TimerDialog.TimerListener() {
             @Override
             public void onConfirmClick(TimerDialog dialog) {
@@ -192,7 +509,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
                 message.setPayload(json.toString().getBytes());
                 message.setQos(appMqttConfig.qos);
                 try {
-                    MokoSupport.getInstance().publish(mokoDevice.getAppTopicDelayTime(), message);
+                    MokoSupport.getInstance().publish(mokoDevice.getAppTopicDelayTime1(), message);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
@@ -202,54 +519,215 @@ public class WallSwitchDetailActivity extends BaseActivity {
         dialog.show();
     }
 
-    public void scheduleClick(View view) {
-        ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
-    }
 
-    public void statisticsClick(View view) {
-        if (mokoDevice != null && "0".equals(mokoDevice.type)) {
-            ToastUtils.showToast(this, getString(R.string.device_info_no_statistics));
+    public void onClickTimer2(View view) {
+        if (isWindowLocked()) {
             return;
         }
         if (!MokoSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
             return;
         }
         if (!mokoDevice.isOnline) {
-            ToastUtils.showToast(this, R.string.device_offline);
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
             return;
         }
-        startActivity(new Intent(this, ElectricityActivity.class));
+        TimerDialog dialog = new TimerDialog(this);
+        dialog.setData(mokoDevice.on_off_1);
+        dialog.setListener(new TimerDialog.TimerListener() {
+            @Override
+            public void onConfirmClick(TimerDialog dialog) {
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+                    return;
+                }
+                if (!mokoDevice.isOnline) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+                    return;
+                }
+                showLoadingProgressDialog(getString(R.string.wait));
+                JsonObject json = new JsonObject();
+                json.addProperty("delay_hour", dialog.getWvHour());
+                json.addProperty("delay_minute", dialog.getWvMinute());
+                String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+                MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+                MqttMessage message = new MqttMessage();
+                message.setPayload(json.toString().getBytes());
+                message.setQos(appMqttConfig.qos);
+                try {
+                    MokoSupport.getInstance().publish(mokoDevice.getAppTopicDelayTime2(), message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
-    public void switchClick(View view) {
+
+    public void onClickTimer3(View view) {
+        if (isWindowLocked()) {
+            return;
+        }
         if (!MokoSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
             return;
         }
         if (!mokoDevice.isOnline) {
-            ToastUtils.showToast(this, R.string.device_offline);
+            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
             return;
         }
-        showLoadingProgressDialog(getString(R.string.wait));
-        LogModule.i("切换开关");
-        JsonObject json = new JsonObject();
-        json.addProperty("switch_state", mokoDevice.on_off ? "off" : "on");
-        String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
-        MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
-        MqttMessage message = new MqttMessage();
-        message.setPayload(json.toString().getBytes());
-        message.setQos(appMqttConfig.qos);
-        try {
-            MokoSupport.getInstance().publish(mokoDevice.getAppTopicSwitchState(), message);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+        TimerDialog dialog = new TimerDialog(this);
+        dialog.setData(mokoDevice.on_off_1);
+        dialog.setListener(new TimerDialog.TimerListener() {
+            @Override
+            public void onConfirmClick(TimerDialog dialog) {
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+                    return;
+                }
+                if (!mokoDevice.isOnline) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+                    return;
+                }
+                showLoadingProgressDialog(getString(R.string.wait));
+                JsonObject json = new JsonObject();
+                json.addProperty("delay_hour", dialog.getWvHour());
+                json.addProperty("delay_minute", dialog.getWvMinute());
+                String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+                MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+                MqttMessage message = new MqttMessage();
+                message.setPayload(json.toString().getBytes());
+                message.setQos(appMqttConfig.qos);
+                try {
+                    MokoSupport.getInstance().publish(mokoDevice.getAppTopicDelayTime3(), message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(mReceiver);
+    public void onClickEdit1(final EditText editText) {
+        View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
+        final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
+        String switchName = editText.getText().toString();
+        etDeviceName.setText(switchName);
+        etDeviceName.setSelection(switchName.length());
+        CustomDialog dialog = new CustomDialog.Builder(this)
+                .setContentView(content)
+                .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String nickName = etDeviceName.getText().toString();
+                        if (TextUtils.isEmpty(nickName)) {
+                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
+                            return;
+                        }
+                        String[] nickNames = mokoDevice.nickName.split("_");
+                        nickNames[1] = nickName;
+                        StringBuffer stringBuffer = new StringBuffer();
+                        for (int i = 0; i < nickNames.length; i++) {
+                            stringBuffer.append(nickNames[i]);
+                            if (i < (nickNames.length - 1))
+                                stringBuffer.append("_");
+                        }
+                        mokoDevice.nickName = stringBuffer.toString();
+                        DBTools.getInstance(WallSwitchDetailActivity.this).updateDevice(mokoDevice);
+                        editText.setText(nickName);
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
+    public void onClickEdit2(final EditText editText) {
+        View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
+        final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
+        String switchName = editText.getText().toString();
+        etDeviceName.setText(switchName);
+        etDeviceName.setSelection(switchName.length());
+        CustomDialog dialog = new CustomDialog.Builder(this)
+                .setContentView(content)
+                .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String nickName = etDeviceName.getText().toString();
+                        if (TextUtils.isEmpty(nickName)) {
+                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
+                            return;
+                        }
+                        String[] nickNames = mokoDevice.nickName.split("_");
+                        nickNames[2] = nickName;
+                        StringBuffer stringBuffer = new StringBuffer();
+                        for (int i = 0; i < nickNames.length; i++) {
+                            stringBuffer.append(nickNames[i]);
+                            if (i < (nickNames.length - 1))
+                                stringBuffer.append("_");
+                        }
+                        mokoDevice.nickName = stringBuffer.toString();
+                        DBTools.getInstance(WallSwitchDetailActivity.this).updateDevice(mokoDevice);
+                        editText.setText(nickName);
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
+    public void onClickEdit3(final EditText editText) {
+        View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
+        final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
+        String switchName = editText.getText().toString();
+        etDeviceName.setText(switchName);
+        etDeviceName.setSelection(switchName.length());
+        CustomDialog dialog = new CustomDialog.Builder(this)
+                .setContentView(content)
+                .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String nickName = etDeviceName.getText().toString();
+                        if (TextUtils.isEmpty(nickName)) {
+                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
+                            return;
+                        }
+                        String[] nickNames = mokoDevice.nickName.split("_");
+                        nickNames[3] = nickName;
+                        StringBuffer stringBuffer = new StringBuffer();
+                        for (int i = 0; i < nickNames.length; i++) {
+                            stringBuffer.append(nickNames[i]);
+                            if (i < (nickNames.length - 1))
+                                stringBuffer.append("_");
+                        }
+                        mokoDevice.nickName = stringBuffer.toString();
+                        DBTools.getInstance(WallSwitchDetailActivity.this).updateDevice(mokoDevice);
+                        editText.setText(nickName);
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
     }
 }

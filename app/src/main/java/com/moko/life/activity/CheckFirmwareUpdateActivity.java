@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -138,7 +137,10 @@ public class CheckFirmwareUpdateActivity extends BaseActivity {
                 dismissLoadingProgressDialog();
             }
             if (AppConstants.ACTION_DEVICE_STATE.equals(action)) {
-                mokoDevice.isOnline = false;
+                String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
+                if (topic.equals(mokoDevice.getDeviceTopicSwitchState())) {
+                    mokoDevice.isOnline = false;
+                }
             }
         }
     };

@@ -49,7 +49,7 @@
         android:id="@+id/rl_wall_switch_1"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        android:background="@color/white_ffffff"
+        android:background="@color/grey_e0e0e0"
         android:paddingLeft="12dp"
         android:paddingRight="12dp">
 
@@ -58,7 +58,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@drawable/wall_switch_switch_on" />
+            android:onClick="onClickWallSwitch1"
+            android:src="@drawable/wall_switch_switch_off" />
 
         <TextView
             android:id="@+id/tv_wall_switch_1_schedule"
@@ -86,6 +87,7 @@
             android:layout_toLeftOf="@+id/tv_wall_switch_1_schedule"
             android:background="@drawable/shape_stroke_btn_bg"
             android:gravity="center"
+            android:onClick="onClickTimer1"
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -102,6 +104,7 @@
             android:drawablePadding="5dp"
             android:drawableRight="@drawable/wall_switch_edit"
             android:gravity="center_vertical"
+            android:onClick="onClickEdit1"
             android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="13sp" />
@@ -124,7 +127,7 @@
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:layout_marginTop="5dp"
-        android:background="@color/white_ffffff"
+        android:background="@color/grey_e0e0e0"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
         android:visibility="gone">
@@ -134,7 +137,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@drawable/wall_switch_switch_on" />
+            android:onClick="onClickWallSwitch2"
+            android:src="@drawable/wall_switch_switch_off" />
 
         <TextView
             android:id="@+id/tv_wall_switch_2_schedule"
@@ -162,6 +166,7 @@
             android:layout_toLeftOf="@+id/tv_wall_switch_2_schedule"
             android:background="@drawable/shape_stroke_btn_bg"
             android:gravity="center"
+            android:onClick="onClickTimer2"
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -178,6 +183,7 @@
             android:drawablePadding="5dp"
             android:drawableRight="@drawable/wall_switch_edit"
             android:gravity="center_vertical"
+            android:onClick="onClickEdit2"
             android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="13sp" />
@@ -200,7 +206,7 @@
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:layout_marginTop="5dp"
-        android:background="@color/white_ffffff"
+        android:background="@color/grey_e0e0e0"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
         android:visibility="gone">
@@ -210,7 +216,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@drawable/wall_switch_switch_on" />
+            android:onClick="onClickWallSwitch3"
+            android:src="@drawable/wall_switch_switch_off" />
 
         <TextView
             android:id="@+id/tv_wall_switch_3_schedule"
@@ -238,6 +245,7 @@
             android:layout_toLeftOf="@+id/tv_wall_switch_3_schedule"
             android:background="@drawable/shape_stroke_btn_bg"
             android:gravity="center"
+            android:onClick="onClickTimer3"
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -254,6 +262,7 @@
             android:drawablePadding="5dp"
             android:drawableRight="@drawable/wall_switch_edit"
             android:gravity="center_vertical"
+            android:onClick="onClickEdit3"
             android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="13sp" />
@@ -285,12 +294,13 @@
         android:layout_marginRight="80dp">
 
         <TextView
-            android:id="@+id/tv_device_schedule"
+            android:id="@+id/tv_wall_switch_all_on"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
             android:drawableTop="@drawable/wall_switch_all_on"
             android:gravity="center_horizontal"
+            android:onClick="onClickAllOn"
             android:text="ALL ON"
             android:textColor="@color/blue_0188cc" />
 
@@ -300,12 +310,13 @@
             android:layout_weight="1.0" />
 
         <TextView
-            android:id="@+id/tv_device_statistics"
+            android:id="@+id/tv_wall_switch_all_off"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
             android:drawableTop="@drawable/wall_switch_all_off"
             android:gravity="center_horizontal"
+            android:onClick="onClickAllOff"
             android:text="ALL OFF"
             android:textColor="@color/blue_0188cc" />
     </LinearLayout>

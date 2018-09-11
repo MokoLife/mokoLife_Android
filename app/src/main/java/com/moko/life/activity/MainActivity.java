@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                 dismissLoadingProgressDialog();
             }
             if (MokoConstants.ACTION_MQTT_RECEIVE.equals(action)) {
-                String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
+                final String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
                 if (devices.isEmpty()) {
                     return;
                 }
@@ -147,6 +147,7 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                                     LogModule.i(device.mac + "离线");
                                     adapter.notifyDataSetChanged();
                                     Intent i = new Intent(AppConstants.ACTION_DEVICE_STATE);
+                                    i.putExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC, topic);
                                     MainActivity.this.sendBroadcast(i);
                                 }
                             });
@@ -159,10 +160,29 @@ public class MainActivity extends BaseActivity implements DeviceAdapter.AdapterC
                                     device.on_off = !device.on_off;
                                 }
                             } else if (topic.contains("iot_wall_switch")) {
-                                String switch_state = object.get("switch_state_01").getAsString();
-                                // 启动设备定时离线，62s收不到应答则认为离线
-                                if (!switch_state.equals(device.on_off ? "on" : "off")) {
-                                    device.on_off = !device.on_off;
+                                int type = Integer.parseInt(device.type);
+                                String switch_state_1;
+                                String switch_state_2;
+                                String switch_state_3;
+                                switch (type) {
+                                    case 1:
+                                        switch_state_1 = object.get("switch_state_01").getAsString();
+                                        device.on_off_1 = "on".equals(switch_state_1);
+                                        break;
+                                    case 2:
+                                        switch_state_1 = object.get("switch_state_01").getAsString();
+                                        device.on_off_1 = "on".equals(switch_state_1);
+                                        switch_state_2 = object.get("switch_state_02").getAsString();
+                                        device.on_off_2 = "on".equals(switch_state_2);
+                                        break;
+                                    case 3:
+                                        switch_state_1 = object.get("switch_state_01").getAsString();
+                                        device.on_off_1 = "on".equals(switch_state_1);
+                                        switch_state_2 = object.get("switch_state_02").getAsString();
+                                        device.on_off_2 = "on".equals(switch_state_2);
+                                        switch_state_3 = object.get("switch_state_03").getAsString();
+                                        device.on_off_3 = "on".equals(switch_state_3);
+                                        break;
                                 }
                             }
                             adapter.notifyDataSetChanged();

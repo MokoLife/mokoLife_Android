@@ -168,7 +168,10 @@ public class MoreActivity extends BaseActivity {
                 dismissLoadingProgressDialog();
             }
             if (AppConstants.ACTION_DEVICE_STATE.equals(action)) {
-                mokoDevice.isOnline = false;
+                String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
+                if (topic.equals(mokoDevice.getDeviceTopicSwitchState())) {
+                    mokoDevice.isOnline = false;
+                }
             }
         }
     };

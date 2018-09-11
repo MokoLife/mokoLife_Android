@@ -118,10 +118,13 @@ public class MokoPlugDetailActivity extends BaseActivity {
                 dismissLoadingProgressDialog();
             }
             if (AppConstants.ACTION_DEVICE_STATE.equals(action)) {
-                mokoDevice.isOnline = false;
-                mokoDevice.on_off = false;
-                tvTimerState.setVisibility(View.GONE);
-                changeSwitchState();
+                String topic = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_TOPIC);
+                if (topic.equals(mokoDevice.getDeviceTopicSwitchState())) {
+                    mokoDevice.isOnline = false;
+                    mokoDevice.on_off = false;
+                    tvTimerState.setVisibility(View.GONE);
+                    changeSwitchState();
+                }
             }
         }
     };

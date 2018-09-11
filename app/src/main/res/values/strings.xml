@@ -67,6 +67,7 @@
     <string name="switch_on">On</string>
     <string name="switch_off">Off</string>
     <string name="device_state_offline">Offline</string>
+    <string name="device_state_online">Online</string>
     <string name="wifi_alert_title">Connect  to device\'s hotspot</string>
     <string name="wifi_alert_1_1">1.  Open"Setting</string>
     <string name="wifi_alert_1_2">> WLAN"</string>
