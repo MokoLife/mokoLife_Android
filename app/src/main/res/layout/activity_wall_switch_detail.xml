@@ -104,7 +104,9 @@
             android:drawablePadding="5dp"
             android:drawableRight="@drawable/wall_switch_edit"
             android:gravity="center_vertical"
+            android:maxWidth="120dp"
             android:onClick="onClickEdit1"
+            android:singleLine="true"
             android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="13sp" />
@@ -183,7 +185,9 @@
             android:drawablePadding="5dp"
             android:drawableRight="@drawable/wall_switch_edit"
             android:gravity="center_vertical"
+            android:maxWidth="120dp"
             android:onClick="onClickEdit2"
+            android:singleLine="true"
             android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="13sp" />
@@ -262,7 +266,9 @@
             android:drawablePadding="5dp"
             android:drawableRight="@drawable/wall_switch_edit"
             android:gravity="center_vertical"
+            android:maxWidth="120dp"
             android:onClick="onClickEdit3"
+            android:singleLine="true"
             android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="13sp" />
