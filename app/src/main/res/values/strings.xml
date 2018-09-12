@@ -109,6 +109,7 @@
     <string name="more_title">More</string>
     <string name="more_modify_name">Modify device name</string>
     <string name="more_modify_name_title">Modify Device Name</string>
+    <string name="more_modify_switch_title">Modify Switch Name</string>
     <string name="more_modify_name_tips">Device name can\'t be blank</string>
     <string name="more_device_info">Device information</string>
     <string name="more_new_firmware">Check firmware update</string>

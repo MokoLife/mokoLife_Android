@@ -29,6 +29,7 @@ import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
 import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
+import com.moko.life.utils.Utils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
 import com.moko.support.entity.DeviceResponse;
@@ -210,16 +211,10 @@ public class AddWallSwitchActivity extends BaseActivity {
                             if (mokoDevice == null) {
                                 mokoDevice = new MokoDevice();
                                 mokoDevice.name = mDeviceResult.device_name;
-                                int switchType = Integer.parseInt(mDeviceResult.device_type);
-                                StringBuffer stringBuffer = new StringBuffer(mDeviceResult.device_name);
-                                stringBuffer.append("_");
-                                for (int i = 0; i < switchType; i++) {
-                                    stringBuffer.append("Switch").append((i + 1) + "");
-                                    if (i < switchType - 1) {
-                                        stringBuffer.append("_");
-                                    }
-                                }
-                                mokoDevice.nickName = stringBuffer.toString();
+                                mokoDevice.nickName = mDeviceResult.device_name;
+                                mokoDevice.switchName1 = "Switch1";
+                                mokoDevice.switchName2 = "Switch2";
+                                mokoDevice.switchName3 = "Switch3";
                                 mokoDevice.specifications = mDeviceResult.device_specifications;
                                 mokoDevice.function = mDeviceResult.device_function;
                                 mokoDevice.mac = mDeviceResult.device_mac;
@@ -411,5 +406,14 @@ public class AddWallSwitchActivity extends BaseActivity {
         super.onDestroy();
         unregisterReceiver(mReceiver);
         unbindService(mServiceConnection);
+    }
+
+    public boolean isWifiCorrect(){
+        String ssid = Utils.getWifiSSID(this);
+        if (TextUtils.isEmpty(ssid) || !ssid.startsWith("\"WS")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

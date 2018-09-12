@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -81,6 +82,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         ButterKnife.bind(this);
         if (getIntent().getExtras() != null) {
             mokoDevice = (MokoDevice) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_DEVICE);
+            deviceType = Integer.parseInt(mokoDevice.type);
             changeSwitchState();
         }
         // 注册广播接收器
@@ -233,23 +235,21 @@ public class WallSwitchDetailActivity extends BaseActivity {
     };
 
     private void changeSwitchState() {
-        deviceType = Integer.parseInt(mokoDevice.type);
-        String nickName = mokoDevice.nickName;
-        if (deviceType == 1) {
-            tvWallSwitch1Edit.setText(nickName.split("_")[1]);
-        } else if (deviceType == 2) {
+        tvWallSwitch1Edit.setText(mokoDevice.switchName1);
+        tvWallSwitch2Edit.setText(mokoDevice.switchName2);
+        tvWallSwitch3Edit.setText(mokoDevice.switchName3);
+        if (deviceType == 2) {
             rlWallSwitch2.setVisibility(View.VISIBLE);
-            tvWallSwitch2Edit.setText(nickName.split("_")[2]);
         } else if (deviceType == 3) {
+            rlWallSwitch2.setVisibility(View.VISIBLE);
             rlWallSwitch3.setVisibility(View.VISIBLE);
-            tvWallSwitch3Edit.setText(nickName.split("_")[3]);
         }
-        rlWallSwitch1.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_1) ? R.color.white_ffffff : R.color.grey_e0e0e0));
-        ivWallSwitch1.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_1) ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
-        rlWallSwitch2.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_2) ? R.color.white_ffffff : R.color.grey_e0e0e0));
-        ivWallSwitch2.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_2) ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
-        rlWallSwitch3.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_3) ? R.color.white_ffffff : R.color.grey_e0e0e0));
-        ivWallSwitch3.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, "on".equals(mokoDevice.on_off_3) ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
+        rlWallSwitch1.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, mokoDevice.on_off_1 ? R.color.white_ffffff : R.color.grey_e0e0e0));
+        ivWallSwitch1.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, mokoDevice.on_off_1 ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
+        rlWallSwitch2.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, mokoDevice.on_off_2 ? R.color.white_ffffff : R.color.grey_e0e0e0));
+        ivWallSwitch2.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, mokoDevice.on_off_2 ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
+        rlWallSwitch3.setBackgroundColor(ContextCompat.getColor(WallSwitchDetailActivity.this, mokoDevice.on_off_3 ? R.color.white_ffffff : R.color.grey_e0e0e0));
+        ivWallSwitch3.setImageDrawable(ContextCompat.getDrawable(WallSwitchDetailActivity.this, mokoDevice.on_off_3 ? R.drawable.wall_switch_switch_on : R.drawable.wall_switch_switch_off));
     }
 
     public void back(View view) {
@@ -501,8 +501,8 @@ public class WallSwitchDetailActivity extends BaseActivity {
                 }
                 showLoadingProgressDialog(getString(R.string.wait));
                 JsonObject json = new JsonObject();
-                json.addProperty("delay_hour", dialog.getWvHour());
-                json.addProperty("delay_minute", dialog.getWvMinute());
+                json.addProperty("delay_hour_01", dialog.getWvHour());
+                json.addProperty("delay_minute_01", dialog.getWvMinute());
                 String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
                 MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
                 MqttMessage message = new MqttMessage();
@@ -547,8 +547,8 @@ public class WallSwitchDetailActivity extends BaseActivity {
                 }
                 showLoadingProgressDialog(getString(R.string.wait));
                 JsonObject json = new JsonObject();
-                json.addProperty("delay_hour", dialog.getWvHour());
-                json.addProperty("delay_minute", dialog.getWvMinute());
+                json.addProperty("delay_hour_02", dialog.getWvHour());
+                json.addProperty("delay_minute_02", dialog.getWvMinute());
                 String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
                 MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
                 MqttMessage message = new MqttMessage();
@@ -593,8 +593,8 @@ public class WallSwitchDetailActivity extends BaseActivity {
                 }
                 showLoadingProgressDialog(getString(R.string.wait));
                 JsonObject json = new JsonObject();
-                json.addProperty("delay_hour", dialog.getWvHour());
-                json.addProperty("delay_minute", dialog.getWvMinute());
+                json.addProperty("delay_hour_03", dialog.getWvHour());
+                json.addProperty("delay_minute_03", dialog.getWvMinute());
                 String mqttConfigAppStr = SPUtiles.getStringValue(WallSwitchDetailActivity.this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
                 MQTTConfig appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
                 MqttMessage message = new MqttMessage();
@@ -611,10 +611,12 @@ public class WallSwitchDetailActivity extends BaseActivity {
         dialog.show();
     }
 
-    public void onClickEdit1(final EditText editText) {
+    public void onClickEdit1(final View view) {
         View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
         final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
-        String switchName = editText.getText().toString();
+        final TextView tvModifyTitle = ButterKnife.findById(content, R.id.tv_modify_title);
+        tvModifyTitle.setText(R.string.more_modify_switch_title);
+        String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
         CustomDialog dialog = new CustomDialog.Builder(this)
@@ -633,28 +635,30 @@ public class WallSwitchDetailActivity extends BaseActivity {
                             ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
                             return;
                         }
-                        String[] nickNames = mokoDevice.nickName.split("_");
-                        nickNames[1] = nickName;
-                        StringBuffer stringBuffer = new StringBuffer();
-                        for (int i = 0; i < nickNames.length; i++) {
-                            stringBuffer.append(nickNames[i]);
-                            if (i < (nickNames.length - 1))
-                                stringBuffer.append("_");
-                        }
-                        mokoDevice.nickName = stringBuffer.toString();
+                        mokoDevice.switchName1 = nickName.toString();
                         DBTools.getInstance(WallSwitchDetailActivity.this).updateDevice(mokoDevice);
-                        editText.setText(nickName);
+                        Intent intent = new Intent(AppConstants.ACTION_MODIFY_NAME);
+                        WallSwitchDetailActivity.this.sendBroadcast(intent);
+                        ((TextView) view).setText(nickName);
                         dialog.dismiss();
                     }
                 })
                 .create();
         dialog.show();
+        ivWallSwitch1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showKeyboard(etDeviceName);
+            }
+        }, 300);
     }
 
-    public void onClickEdit2(final EditText editText) {
+    public void onClickEdit2(final View view) {
         View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
         final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
-        String switchName = editText.getText().toString();
+        final TextView tvModifyTitle = ButterKnife.findById(content, R.id.tv_modify_title);
+        tvModifyTitle.setText(R.string.more_modify_switch_title);
+        String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
         CustomDialog dialog = new CustomDialog.Builder(this)
@@ -673,28 +677,30 @@ public class WallSwitchDetailActivity extends BaseActivity {
                             ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
                             return;
                         }
-                        String[] nickNames = mokoDevice.nickName.split("_");
-                        nickNames[2] = nickName;
-                        StringBuffer stringBuffer = new StringBuffer();
-                        for (int i = 0; i < nickNames.length; i++) {
-                            stringBuffer.append(nickNames[i]);
-                            if (i < (nickNames.length - 1))
-                                stringBuffer.append("_");
-                        }
-                        mokoDevice.nickName = stringBuffer.toString();
+                        mokoDevice.switchName2 = nickName.toString();
                         DBTools.getInstance(WallSwitchDetailActivity.this).updateDevice(mokoDevice);
-                        editText.setText(nickName);
+                        Intent intent = new Intent(AppConstants.ACTION_MODIFY_NAME);
+                        WallSwitchDetailActivity.this.sendBroadcast(intent);
+                        ((TextView) view).setText(nickName);
                         dialog.dismiss();
                     }
                 })
                 .create();
         dialog.show();
+        ivWallSwitch1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showKeyboard(etDeviceName);
+            }
+        }, 300);
     }
 
-    public void onClickEdit3(final EditText editText) {
+    public void onClickEdit3(final View view) {
         View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
         final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
-        String switchName = editText.getText().toString();
+        final TextView tvModifyTitle = ButterKnife.findById(content, R.id.tv_modify_title);
+        tvModifyTitle.setText(R.string.more_modify_switch_title);
+        String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
         CustomDialog dialog = new CustomDialog.Builder(this)
@@ -713,21 +719,36 @@ public class WallSwitchDetailActivity extends BaseActivity {
                             ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
                             return;
                         }
-                        String[] nickNames = mokoDevice.nickName.split("_");
-                        nickNames[3] = nickName;
-                        StringBuffer stringBuffer = new StringBuffer();
-                        for (int i = 0; i < nickNames.length; i++) {
-                            stringBuffer.append(nickNames[i]);
-                            if (i < (nickNames.length - 1))
-                                stringBuffer.append("_");
-                        }
-                        mokoDevice.nickName = stringBuffer.toString();
+                        mokoDevice.switchName3 = nickName.toString();
                         DBTools.getInstance(WallSwitchDetailActivity.this).updateDevice(mokoDevice);
-                        editText.setText(nickName);
+                        Intent intent = new Intent(AppConstants.ACTION_MODIFY_NAME);
+                        WallSwitchDetailActivity.this.sendBroadcast(intent);
+                        ((TextView) view).setText(nickName);
                         dialog.dismiss();
                     }
                 })
                 .create();
         dialog.show();
+        ivWallSwitch1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showKeyboard(etDeviceName);
+            }
+        }, 300);
+    }
+
+    //弹出软键盘
+    public void showKeyboard(EditText editText) {
+        //其中editText为dialog中的输入框的 EditText
+        if (editText != null) {
+            //设置可获得焦点
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            //请求获得焦点
+            editText.requestFocus();
+            //调用系统输入法
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.showSoftInput(editText, 0);
+        }
     }
 }

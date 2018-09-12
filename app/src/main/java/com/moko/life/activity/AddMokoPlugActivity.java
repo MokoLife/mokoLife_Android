@@ -29,6 +29,7 @@ import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
 import com.moko.life.utils.SPUtiles;
 import com.moko.life.utils.ToastUtils;
+import com.moko.life.utils.Utils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
 import com.moko.support.entity.DeviceResponse;
@@ -404,5 +405,14 @@ public class AddMokoPlugActivity extends BaseActivity {
         super.onDestroy();
         unregisterReceiver(mReceiver);
         unbindService(mServiceConnection);
+    }
+
+    public boolean isWifiCorrect(){
+        String ssid = Utils.getWifiSSID(this);
+        if (TextUtils.isEmpty(ssid) || !ssid.startsWith("\"MK")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

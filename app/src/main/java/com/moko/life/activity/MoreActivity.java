@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -183,8 +184,9 @@ public class MoreActivity extends BaseActivity {
     public void modifyName(View view) {
         View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
         final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
-        etDeviceName.setText(mokoDevice.nickName);
-        etDeviceName.setSelection(mokoDevice.nickName.length());
+        String deviceName = tvDeviceName.getText().toString();
+        etDeviceName.setText(deviceName);
+        etDeviceName.setSelection(deviceName.length());
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -211,6 +213,13 @@ public class MoreActivity extends BaseActivity {
                 })
                 .create();
         dialog.show();
+
+        tvDeviceName.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showKeyboard(etDeviceName);
+            }
+        }, 300);
     }
 
     public void deviceInfo(View view) {
@@ -319,5 +328,21 @@ public class MoreActivity extends BaseActivity {
 
     public void about(View view) {
         startActivity(new Intent(this, AboutActivity.class));
+    }
+
+
+    //弹出软键盘
+    public void showKeyboard(EditText editText) {
+        //其中editText为dialog中的输入框的 EditText
+        if (editText != null) {
+            //设置可获得焦点
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            //请求获得焦点
+            editText.requestFocus();
+            //调用系统输入法
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.showSoftInput(editText, 0);
+        }
     }
 }

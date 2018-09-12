@@ -30,6 +30,7 @@
             android:drawablePadding="14dp"
             android:drawableRight="@drawable/arrow_right"
             android:gravity="center_vertical"
+            android:singleLine="true"
             android:text=""
             android:textColor="@color/blue_0188cc"
             android:textSize="15sp" />

@@ -139,13 +139,4 @@ public class BaseActivity extends FragmentActivity {
     public boolean isLocationPermissionOpen() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
-
-    public boolean isWifiCorrect(){
-        String ssid = Utils.getWifiSSID(this);
-        if (TextUtils.isEmpty(ssid) || !ssid.startsWith("\"MK")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 }

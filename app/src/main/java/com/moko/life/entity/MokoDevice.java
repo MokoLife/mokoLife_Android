@@ -26,6 +26,9 @@ public class MokoDevice implements Serializable {
     public int id;
     public String name;
     public String nickName;
+    public String switchName1;
+    public String switchName2;
+    public String switchName3;
     public String function;
     public String specifications;
     public String mac;
