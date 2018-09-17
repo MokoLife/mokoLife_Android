@@ -19,7 +19,7 @@ public class OperationWallSwitchStepsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plug_operation_steps);
+        setContentView(R.layout.activity_wall_switch_operation_steps);
         ButterKnife.bind(this);
     }
 

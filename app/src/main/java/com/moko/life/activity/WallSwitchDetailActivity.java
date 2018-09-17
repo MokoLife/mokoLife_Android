@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -533,7 +535,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
             return;
         }
         TimerDialog dialog = new TimerDialog(this);
-        dialog.setData(mokoDevice.on_off_1);
+        dialog.setData(mokoDevice.on_off_2);
         dialog.setListener(new TimerDialog.TimerListener() {
             @Override
             public void onConfirmClick(TimerDialog dialog) {
@@ -579,7 +581,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
             return;
         }
         TimerDialog dialog = new TimerDialog(this);
-        dialog.setData(mokoDevice.on_off_1);
+        dialog.setData(mokoDevice.on_off_3);
         dialog.setListener(new TimerDialog.TimerListener() {
             @Override
             public void onConfirmClick(TimerDialog dialog) {
@@ -611,6 +613,14 @@ public class WallSwitchDetailActivity extends BaseActivity {
         dialog.show();
     }
 
+    private InputFilter filter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source.equals(" ") || source.toString().contentEquals("\n")) return "";
+            else return null;
+        }
+    };
+
     public void onClickEdit1(final View view) {
         View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
         final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
@@ -619,6 +629,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
+        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -632,7 +643,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String nickName = etDeviceName.getText().toString();
                         if (TextUtils.isEmpty(nickName)) {
-                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
+                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_switch_name_tips);
                             return;
                         }
                         mokoDevice.switchName1 = nickName.toString();
@@ -661,6 +672,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
+        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -674,7 +686,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String nickName = etDeviceName.getText().toString();
                         if (TextUtils.isEmpty(nickName)) {
-                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
+                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_switch_name_tips);
                             return;
                         }
                         mokoDevice.switchName2 = nickName.toString();
@@ -703,6 +715,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
+        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -716,7 +729,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String nickName = etDeviceName.getText().toString();
                         if (TextUtils.isEmpty(nickName)) {
-                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_name_tips);
+                            ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.more_modify_switch_name_tips);
                             return;
                         }
                         mokoDevice.switchName3 = nickName.toString();

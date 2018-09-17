@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -181,12 +183,21 @@ public class MoreActivity extends BaseActivity {
         finish();
     }
 
+    private InputFilter filter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source.equals(" ") || source.toString().contentEquals("\n")) return "";
+            else return null;
+        }
+    };
+
     public void modifyName(View view) {
         View content = LayoutInflater.from(this).inflate(R.layout.modify_name, null);
         final EditText etDeviceName = ButterKnife.findById(content, R.id.et_device_name);
         String deviceName = tvDeviceName.getText().toString();
         etDeviceName.setText(deviceName);
         etDeviceName.setSelection(deviceName.length());
+        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {

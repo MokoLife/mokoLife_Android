@@ -2,6 +2,8 @@ package com.moko.life.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,6 +32,14 @@ public class ModifyNameActivity extends BaseActivity {
     EditText etNickName;
     private MokoDevice device;
 
+    private InputFilter filter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source.equals(" ") || source.toString().contentEquals("\n")) return "";
+            else return null;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +48,7 @@ public class ModifyNameActivity extends BaseActivity {
         device = (MokoDevice) getIntent().getSerializableExtra("mokodevice");
         etNickName.setText(device.nickName);
         etNickName.setSelection(etNickName.getText().toString().length());
+        etNickName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
     }
 
 
