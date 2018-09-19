@@ -10,6 +10,8 @@ import android.content.ServiceConnection;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -310,9 +312,18 @@ public class AddWallSwitchActivity extends BaseActivity {
         }
     }
 
+    private InputFilter filter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source.equals(" ") || source.toString().contentEquals("\n")) return "";
+            else return null;
+        }
+    };
+
     private void showWifiInputDialog() {
         View wifiInputView = LayoutInflater.from(this).inflate(R.layout.wifi_input_content, null);
         final EditText etSSID = ButterKnife.findById(wifiInputView, R.id.et_ssid);
+        etSSID.setFilters(new InputFilter[]{filter});
         final EditText etPassword = ButterKnife.findById(wifiInputView, R.id.et_password);
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(wifiInputView)
@@ -325,6 +336,12 @@ public class AddWallSwitchActivity extends BaseActivity {
                 .setNegativeButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mWifiSSID = etSSID.getText().toString();
+                        // 获取WIFI后，连接成功后发给设备
+                        if (TextUtils.isEmpty(mWifiSSID)) {
+                            ToastUtils.showToast(AddWallSwitchActivity.this, getString(R.string.wifi_verify_empty));
+                            return;
+                        }
                         dialog.dismiss();
                         showLoadingProgressDialog(getString(R.string.wait));
                         notBlinkingTips.postDelayed(new Runnable() {
@@ -332,13 +349,7 @@ public class AddWallSwitchActivity extends BaseActivity {
                             public void run() {
                                 dismissLoadingProgressDialog();
                                 if (isWifiCorrect()) {
-                                    mWifiSSID = etSSID.getText().toString();
                                     mWifiPassword = etPassword.getText().toString();
-                                    // 获取WIFI后，连接成功后发给设备
-                                    if (TextUtils.isEmpty(mWifiSSID)) {
-                                        ToastUtils.showToast(AddWallSwitchActivity.this, getString(R.string.wifi_verify_empty));
-                                        return;
-                                    }
                                     // 弹出加载弹框
                                     showConnMqttDialog();
                                     // 连接设备
@@ -408,7 +419,7 @@ public class AddWallSwitchActivity extends BaseActivity {
         unbindService(mServiceConnection);
     }
 
-    public boolean isWifiCorrect(){
+    public boolean isWifiCorrect() {
         String ssid = Utils.getWifiSSID(this);
         if (TextUtils.isEmpty(ssid) || !ssid.startsWith("\"WS")) {
             return false;

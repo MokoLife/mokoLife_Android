@@ -76,7 +76,7 @@
     <string name="wifi_input_title">Please enter Wi-Fi information</string>
     <string name="wifi_input_ssid">Wi-Fi :</string>
     <string name="wifi_input_password">Password :</string>
-    <string name="wifi_verify_empty">SSID can\'t be null</string>
+    <string name="wifi_verify_empty">Please enter a valid name of wifi.</string>
     <string name="wifi_connecting">Connecting...</string>
     <string name="mqtt_connecting_title">Connecting now</string>
     <string name="mqtt_connecting_content">Make sure your phone and device are \nas close to your router as possible.</string>
@@ -122,7 +122,7 @@
     <string name="device_info_title">Device Information</string>
     <string name="device_info_company">Company Name</string>
     <string name="device_info_date">Date of Manufacture</string>
-    <string name="device_info_name">Device Name</string>
+    <string name="device_info_name">Product Model</string>
     <string name="device_info_version">Firmware Version</string>
     <string name="device_info_mac">Device Mac</string>
     <string name="device_info_no_statistics">The device does not have this function</string>

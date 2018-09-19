@@ -80,8 +80,6 @@ public class SetAppMqttActivity extends BaseActivity implements RadioGroup.OnChe
         if (TextUtils.isEmpty(mqttConfigStr)) {
             mqttConfig = new MQTTConfig();
             mqttConfig.clientId = UUID.randomUUID().toString().replaceAll("-", "");
-            mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
-            SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, mqttConfigStr);
         } else {
             Gson gson = new Gson();
             mqttConfig = gson.fromJson(mqttConfigStr, MQTTConfig.class);
