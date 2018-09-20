@@ -92,6 +92,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
         filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
         filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
+        filter.addAction(AppConstants.ACTION_MODIFY_NAME);
         filter.addAction(AppConstants.ACTION_DEVICE_STATE);
         registerReceiver(mReceiver, filter);
     }
@@ -232,6 +233,10 @@ public class WallSwitchDetailActivity extends BaseActivity {
                     tvWallSwitch3TimerState.setVisibility(View.GONE);
                     changeSwitchState();
                 }
+            }
+            if (AppConstants.ACTION_MODIFY_NAME.equals(action)) {
+                MokoDevice device = DBTools.getInstance(WallSwitchDetailActivity.this).selectDevice(mokoDevice.mac);
+                mokoDevice.nickName = device.nickName;
             }
         }
     };

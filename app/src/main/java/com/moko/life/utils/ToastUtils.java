@@ -1,6 +1,8 @@
 package com.moko.life.utils;
 
 import android.content.Context;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
 
@@ -23,7 +25,9 @@ public class ToastUtils {
      * @param tip
      */
     public static void showToast(Context context, String tip) {
-        Toasty.normal(context, tip).show();
+        Toast toast = Toasty.normal(context, tip);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
 }

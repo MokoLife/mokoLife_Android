@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
+import com.moko.life.db.DBTools;
 import com.moko.life.dialog.TimerDialog;
 import com.moko.life.entity.MQTTConfig;
 import com.moko.life.entity.MokoDevice;
@@ -73,6 +74,7 @@ public class MokoPlugDetailActivity extends BaseActivity {
         filter.addAction(MokoConstants.ACTION_MQTT_CONNECTION);
         filter.addAction(MokoConstants.ACTION_MQTT_RECEIVE);
         filter.addAction(MokoConstants.ACTION_MQTT_PUBLISH);
+        filter.addAction(AppConstants.ACTION_MODIFY_NAME);
         filter.addAction(AppConstants.ACTION_DEVICE_STATE);
         registerReceiver(mReceiver, filter);
     }
@@ -125,6 +127,10 @@ public class MokoPlugDetailActivity extends BaseActivity {
                     tvTimerState.setVisibility(View.GONE);
                     changeSwitchState();
                 }
+            }
+            if (AppConstants.ACTION_MODIFY_NAME.equals(action)) {
+                MokoDevice device = DBTools.getInstance(MokoPlugDetailActivity.this).selectDevice(mokoDevice.mac);
+                mokoDevice.nickName = device.nickName;
             }
         }
     };
