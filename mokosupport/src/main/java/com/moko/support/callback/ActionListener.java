@@ -157,7 +157,9 @@ public class ActionListener implements IMqttActionListener {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_PUBLISH);
         intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_FAILED);
         context.sendBroadcast(intent);
-        exception.printStackTrace();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -170,7 +172,9 @@ public class ActionListener implements IMqttActionListener {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_SUBSCRIBE);
         intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_FAILED);
         context.sendBroadcast(intent);
-        exception.printStackTrace();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
     }
 
 
@@ -179,7 +183,9 @@ public class ActionListener implements IMqttActionListener {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_UNSUBSCRIBE);
         intent.putExtra(MokoConstants.EXTRA_MQTT_STATE, MokoConstants.MQTT_STATE_FAILED);
         context.sendBroadcast(intent);
-        exception.printStackTrace();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -192,7 +198,9 @@ public class ActionListener implements IMqttActionListener {
         Intent intent = new Intent(MokoConstants.ACTION_MQTT_CONNECTION);
         intent.putExtra(MokoConstants.EXTRA_MQTT_CONNECTION_STATE, MokoConstants.MQTT_CONN_STATUS_FAILED);
         context.sendBroadcast(intent);
-        exception.printStackTrace();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
     }
 
 }

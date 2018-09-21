@@ -2,12 +2,15 @@ package com.moko.life.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.widget.ImageView;
@@ -15,6 +18,7 @@ import android.widget.ImageView;
 import com.moko.life.AppConstants;
 import com.moko.life.R;
 import com.moko.life.base.BaseActivity;
+import com.moko.life.utils.Utils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,6 +55,23 @@ public class GuideActivity extends BaseActivity {
     }
 
     private void delayGotoMain() {
+        if (!Utils.isLocServiceEnable(this)) {
+            showOpenLocationDialog();
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!isLocationPermissionOpen()) {
+                showRequestPermissionDialog2();
+                return;
+            } else {
+                AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+                int checkOp = appOpsManager.checkOp(AppOpsManager.OPSTR_COARSE_LOCATION, Process.myUid(), getPackageName());
+                if (checkOp != AppOpsManager.MODE_ALLOWED) {
+                    showOpenSettingsDialog2();
+                    return;
+                }
+            }
+        }
         ivLogo.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -84,9 +105,17 @@ public class GuideActivity extends BaseActivity {
                         // 判断用户是否 点击了不再提醒。(检测该权限是否还可以申请)
                         boolean shouldShowRequest = shouldShowRequestPermissionRationale(permissions[0]);
                         if (shouldShowRequest) {
-                            showRequestPermissionDialog();
+                            if (permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                                showRequestPermissionDialog2();
+                            } else {
+                                showRequestPermissionDialog();
+                            }
                         } else {
-                            showOpenSettingsDialog();
+                            if (permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                                showOpenSettingsDialog2();
+                            } else {
+                                showOpenSettingsDialog();
+                            }
                         }
                     } else {
                         delayGotoMain();
@@ -129,6 +158,74 @@ public class GuideActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ActivityCompat.requestPermissions(GuideActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppConstants.PERMISSION_REQUEST_CODE);
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        return;
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    private void showOpenLocationDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.location_need_title)
+                .setMessage(R.string.location_need_content)
+                .setPositiveButton(getString(R.string.permission_open), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(intent, AppConstants.REQUEST_CODE_LOCATION_SETTINGS);
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        return;
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    private void showOpenSettingsDialog2() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.permission_location_close_title)
+                .setMessage(R.string.permission_location_close_content)
+                .setPositiveButton(getString(R.string.permission_open), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        // 根据包名打开对应的设置界面
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivityForResult(intent, AppConstants.REQUEST_CODE_PERMISSION_2);
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        return;
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    private void showRequestPermissionDialog2() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.permission_location_need_title)
+                .setMessage(R.string.permission_location_need_content)
+                .setPositiveButton(getString(R.string.ensure), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(GuideActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, AppConstants.PERMISSION_REQUEST_CODE);
                     }
                 })
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {

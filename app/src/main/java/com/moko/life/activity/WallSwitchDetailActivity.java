@@ -361,12 +361,36 @@ public class WallSwitchDetailActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_wall_switch_1_schedule:
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+                    return;
+                }
+                if (!mokoDevice.isOnline) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+                    return;
+                }
                 ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
                 break;
             case R.id.tv_wall_switch_2_schedule:
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+                    return;
+                }
+                if (!mokoDevice.isOnline) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+                    return;
+                }
                 ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
                 break;
             case R.id.tv_wall_switch_3_schedule:
+                if (!MokoSupport.getInstance().isConnected()) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.network_error);
+                    return;
+                }
+                if (!mokoDevice.isOnline) {
+                    ToastUtils.showToast(WallSwitchDetailActivity.this, R.string.device_offline);
+                    return;
+                }
                 ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
                 break;
         }

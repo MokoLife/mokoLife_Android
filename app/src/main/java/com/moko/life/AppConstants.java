@@ -37,6 +37,8 @@ public class AppConstants {
     public static final int REQUEST_CODE_WIFI_SETTING = 0x10;
     public static final int REQUEST_CODE_OPERATION_STEP = 0x11;
     public static final int REQUEST_CODE_PERMISSION = 120;
+    public static final int REQUEST_CODE_PERMISSION_2 = 121;
+    public static final int REQUEST_CODE_LOCATION_SETTINGS = 122;
 
     public static final int PERMISSION_REQUEST_CODE = 1;
     // result_code

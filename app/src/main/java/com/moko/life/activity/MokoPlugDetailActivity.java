@@ -212,20 +212,28 @@ public class MokoPlugDetailActivity extends BaseActivity {
     }
 
     public void scheduleClick(View view) {
+        if (!MokoSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(MokoPlugDetailActivity.this, R.string.network_error);
+            return;
+        }
+        if (!mokoDevice.isOnline) {
+            ToastUtils.showToast(MokoPlugDetailActivity.this, R.string.device_offline);
+            return;
+        }
         ToastUtils.showToast(this, R.string.device_detail_schedule_tips);
     }
 
     public void statisticsClick(View view) {
-        if (mokoDevice != null && "0".equals(mokoDevice.type)) {
-            ToastUtils.showToast(this, getString(R.string.device_info_no_statistics));
-            return;
-        }
         if (!MokoSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
         if (!mokoDevice.isOnline) {
             ToastUtils.showToast(this, R.string.device_offline);
+            return;
+        }
+        if (mokoDevice != null && "0".equals(mokoDevice.type)) {
+            ToastUtils.showToast(this, getString(R.string.device_info_no_statistics));
             return;
         }
         startActivity(new Intent(this, ElectricityActivity.class));

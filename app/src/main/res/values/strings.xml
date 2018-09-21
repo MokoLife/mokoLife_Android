@@ -127,5 +127,14 @@
     <string name="device_info_mac">Device Mac</string>
     <string name="device_info_no_statistics">The device does not have this function</string>
 
+    <string name="ensure">OK</string>
+    <string name="permission_open">OK</string>
+    <string name="location_need_title">Turn on Location permission</string>
+    <string name="location_need_content">After that, MokoLife could search the wifi</string>
+    <string name="permission_location_close_title">Location persission is not available</string>
+    <string name="permission_location_close_content">Please find it in cellphone setting- permission, and allow MokoLife use the Location and Storage permission</string>
+    <string name="permission_location_need_title">Turn on Location permission</string>
+    <string name="permission_location_need_content">After that, MokoLife could search the wifi</string>
+
 
 </resources>
