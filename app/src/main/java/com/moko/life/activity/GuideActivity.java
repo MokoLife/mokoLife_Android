@@ -93,6 +93,16 @@ public class GuideActivity extends BaseActivity {
                 }
             }
         }
+        if (requestCode == AppConstants.REQUEST_CODE_PERMISSION_2) {
+            delayGotoMain();
+        }
+        if (requestCode == AppConstants.REQUEST_CODE_LOCATION_SETTINGS) {
+            if (!Utils.isLocServiceEnable(this)) {
+                showOpenLocationDialog();
+            } else {
+                delayGotoMain();
+            }
+        }
     }
 
     @Override

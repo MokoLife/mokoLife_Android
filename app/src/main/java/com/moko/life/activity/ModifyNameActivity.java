@@ -1,5 +1,6 @@
 package com.moko.life.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -7,6 +8,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.moko.life.AppConstants;
@@ -49,6 +51,13 @@ public class ModifyNameActivity extends BaseActivity {
         etNickName.setText(device.nickName);
         etNickName.setSelection(etNickName.getText().toString().length());
         etNickName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
+        etNickName.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager inputManager = (InputMethodManager) etNickName.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.showSoftInput(etNickName, 0);
+            }
+        }, 300);
     }
 
 
