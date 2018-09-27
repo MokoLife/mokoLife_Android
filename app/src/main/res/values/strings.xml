@@ -63,7 +63,9 @@
     <string name="mqtt_verify_length">Length range is 0~32</string>
     <string name="mqtt_verify_catalogue">Catalogue error</string>
     <string name="success">Success</string>
+    <string name="update_success">Update Success</string>
     <string name="failed">Failed</string>
+    <string name="update_failed">Update Failed</string>
     <string name="switch_on">On</string>
     <string name="switch_off">Off</string>
     <string name="device_state_offline">Offline</string>

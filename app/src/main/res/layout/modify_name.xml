@@ -21,7 +21,7 @@
         android:layout_height="45dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/shape_corner_btn_bg_white"
-        android:maxLength="20"
+        android:maxLength="10"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:singleLine="true"

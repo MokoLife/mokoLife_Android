@@ -93,9 +93,9 @@ public class CheckFirmwareUpdateActivity extends BaseActivity {
                     JsonObject object = new JsonParser().parse(message).getAsJsonObject();
                     String ota_result = object.get("ota_result").getAsString();
                     if ("R1".equals(ota_result)) {
-                        ToastUtils.showToast(CheckFirmwareUpdateActivity.this, R.string.success);
-                    } else if ("R3".equals(ota_result) || "R4".equals(ota_result)) {
-                        ToastUtils.showToast(CheckFirmwareUpdateActivity.this, R.string.failed);
+                        ToastUtils.showToast(CheckFirmwareUpdateActivity.this, R.string.update_success);
+                    } else {
+                        ToastUtils.showToast(CheckFirmwareUpdateActivity.this, R.string.update_failed);
                     }
                     try {
                         MokoSupport.getInstance().unSubscribe(mokoDevice.getDeviceTopicUpgradeState());

@@ -93,6 +93,7 @@ public class MokoPlugDetailActivity extends BaseActivity {
                     String message = intent.getStringExtra(MokoConstants.EXTRA_MQTT_RECEIVE_MESSAGE);
                     JsonObject object = new JsonParser().parse(message).getAsJsonObject();
                     String switch_state = object.get("switch_state").getAsString();
+                    tvSwitchState.setText(mokoDevice.on_off ? R.string.device_detail_switch_on : R.string.device_detail_switch_off);
                     if (!switch_state.equals(mokoDevice.on_off ? "on" : "off")) {
                         mokoDevice.on_off = !mokoDevice.on_off;
                         changeSwitchState();
