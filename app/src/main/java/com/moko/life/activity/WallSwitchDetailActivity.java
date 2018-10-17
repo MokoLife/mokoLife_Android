@@ -658,7 +658,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
-        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(10)});
+        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -701,7 +701,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
-        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(10)});
+        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -744,7 +744,7 @@ public class WallSwitchDetailActivity extends BaseActivity {
         String switchName = ((TextView) view).getText().toString();
         etDeviceName.setText(switchName);
         etDeviceName.setSelection(switchName.length());
-        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(10)});
+        etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
         CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
