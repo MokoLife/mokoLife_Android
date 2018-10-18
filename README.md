@@ -7,8 +7,8 @@
 ### 1.3	Edit the build.gradle file of the main project:
 
 	dependencies {
-	    compile fileTree(dir: 'libs', include: ['*.jar'])
-	    compile project(path: ': mokosupport')
+	    implementation fileTree(dir: 'libs', include: ['*.jar'])
+	    implementation project(path: ': mokosupport')
 	}
 
 ### 1.4	Import SDK during project initialization:
